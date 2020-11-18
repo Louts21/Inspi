@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Inspi</string>
+    <string name="button_connection">Connect to a device</string>
+    <string name="button_camera">Use camera</string>
+    <string name="button_picture">Take gallery picture</string>
+    <string name="button_memo">Create memo</string>
+    <string name="button_picture_gallery">Your picture gallery</string>
+    <string name="button_memo_gallery">Your memo gallery</string>
+
+    <string name="text_memo">Empty</string>
+    <string name="button_save">Save</string>
+</resources>
