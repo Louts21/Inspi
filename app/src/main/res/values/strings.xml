@@ -9,4 +9,8 @@
 
     <string name="text_memo">Empty</string>
     <string name="button_save">Save</string>
+
+    <string name="button_discover">Scan for devices</string>
+    <string name="button_discoverability">Activate discoverability</string>
+    <string name="textView_devices">Please press Discover</string>
 </resources>

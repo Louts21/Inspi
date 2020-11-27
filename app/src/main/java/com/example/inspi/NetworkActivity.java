@@ -2,40 +2,106 @@ package com.example.inspi;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class NetworkActivity extends AppCompatActivity {
 
-    private final IntentFilter intentFilter = new IntentFilter();
+    private final BluetoothAdapter BLUETOOTHADAPTER = BluetoothAdapter.getDefaultAdapter();
+    private final int REQUEST_ENABLE_BT = 0;
 
-    WifiP2pManager.Channel channel;
-    WifiP2pManager manager;
+    private Set<BluetoothDevice> foundDevices = new HashSet<>();
+    private TextView deviceTextView;
+    private String deviceString;
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (device != null) {
+                    if (device.getName() != null) {
+                        String deviceName = device.getName();
+                        String deviceHardwareAddress = device.getAddress();
+                        foundDevices.add(device);
+                    }
+                }
+            }
+        }
+    };
+
+    public void openDiscoverDevices(View view) {
+        int counter = 12; //12 seconds
+        boolean answer = BLUETOOTHADAPTER.startDiscovery();
+        if (answer) {
+            Toast.makeText(NetworkActivity.this, "Discover Devices", Toast.LENGTH_SHORT).show();
+            for (BluetoothDevice bluetoothDevice: foundDevices) {
+                deviceString = bluetoothDevice.getName() + bluetoothDevice.getAddress();
+            }
+            deviceTextView.setText(deviceString);
+        } else {
+            Toast.makeText(NetworkActivity.this, "Discover Device couldn't work.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void enableDiscoverability(View view) {
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivity(discoverableIntent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_network);
 
-        // Indicates a change in the Wi-Fi P2P status.
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        // Test if the device supports Bluetooth
+        if (BLUETOOTHADAPTER == null) {
+            // Device doesn't support Bluetooth.
+            Toast.makeText(NetworkActivity.this, "Bluetooth is not available", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!BLUETOOTHADAPTER.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+        }
 
-        // Indicates a change in the list of available peers.
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-
-        // Indicates the state if Wi-Fi P2P connectivity has changed
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-
-        // Indicates this device's details have changed
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
-        manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        channel = manager.initialize(this, getMainLooper(), null);
+        deviceTextView = (TextView) findViewById(R.id.textView);
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(receiver, filter);
     }
 
-    public static void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
-        // Do something in response to th boolean you are supplied
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            // Bluetooth is working
+            Toast.makeText(NetworkActivity.this, "Bluetooth is enabled", Toast.LENGTH_SHORT).show();
+        } else if (resultCode == RESULT_CANCELED) {
+            // Bluetooth is not working
+            Toast.makeText(NetworkActivity.this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Don't forget to unregister the ACTION_FOUND receiver.
+        unregisterReceiver(receiver);
     }
 }
