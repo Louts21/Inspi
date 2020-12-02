@@ -1,4 +1,4 @@
-package com.example.inspi;
+package com.example.inspi.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,11 +8,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.inspi.R;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -80,7 +81,7 @@ public class NetworkActivity extends AppCompatActivity {
             }
         }
 
-        deviceTextView = (TextView) findViewById(R.id.textView);
+        deviceTextView = findViewById(R.id.textView);
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(receiver, filter);
     }

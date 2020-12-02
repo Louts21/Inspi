@@ -1,4 +1,4 @@
-package com.example.inspi;
+package com.example.inspi.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.inspi.R;
 
 import java.io.File;
 
@@ -24,7 +26,7 @@ public class CreateMemoActivity extends AppCompatActivity {
      * Should save the created memo
      */
     public void saveMemo(View view) {
-        EditText editText = (EditText) findViewById(R.id.memoTextField);
+        EditText editText = findViewById(R.id.memoTextField);
         if (!editText.getText().toString().isEmpty()) {
             File file = new File(CreateMemoActivity.this.getFilesDir(), "memos");
             Toast.makeText(CreateMemoActivity.this, "Saved", Toast.LENGTH_SHORT).show();

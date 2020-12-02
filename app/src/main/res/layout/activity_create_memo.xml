@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateMemoActivity">
+    tools:context=".controller.CreateMemoActivity">
 
     <EditText
         android:id="@+id/memoTextField"
@@ -25,11 +25,13 @@
 
     <Button
         android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="90dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="250dp"
         android:layout_marginTop="24dp"
         android:onClick="saveMemo"
         android:text="@string/button_save"
-        app:layout_constraintTop_toBottomOf="@+id/memoTextField"
-        tools:layout_editor_absoluteX="291dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/memoTextField" />
 </androidx.constraintlayout.widget.ConstraintLayout>

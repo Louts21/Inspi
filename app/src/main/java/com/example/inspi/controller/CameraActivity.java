@@ -1,8 +1,10 @@
-package com.example.inspi;
+package com.example.inspi.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.inspi.R;
 
 public class CameraActivity extends AppCompatActivity {
 
