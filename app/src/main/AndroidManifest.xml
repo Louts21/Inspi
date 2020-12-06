@@ -4,8 +4,9 @@
     package="com.example.inspi">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -19,14 +20,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".controller.NetworkActivity"
+            android:name=".controller.MemoGallery"
             android:parentActivityName=".controller.MainActivity"
             tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".controller.MainActivity"/>
         </activity>
-        <activity android:name=".controller.CameraActivity" />
+        <activity
+            android:name=".controller.NetworkActivity"
+            android:parentActivityName=".controller.MainActivity"
+            tools:targetApi="jelly_bean">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controller.MainActivity" />
+        </activity>
         <activity
             android:name=".controller.CreateMemoActivity"
             android:parentActivityName=".controller.MainActivity"

@@ -13,4 +13,8 @@
     <string name="button_discover">Scan for devices</string>
     <string name="button_discoverability">Activate discoverability</string>
     <string name="textView_devices">Please press Discover</string>
+
+    <string name="text_memo_name">Empty</string>
+    <string name="button_open">Open</string>
+    <string name="textView_memo">Please press select a name and press Open.</string>
 </resources>

@@ -45,7 +45,6 @@ public class NetworkActivity extends AppCompatActivity {
     };
 
     public void openDiscoverDevices(View view) {
-        int counter = 12; //12 seconds
         boolean answer = BLUETOOTHADAPTER.startDiscovery();
         if (answer) {
             Toast.makeText(NetworkActivity.this, "Discover Devices", Toast.LENGTH_SHORT).show();
@@ -56,7 +55,6 @@ public class NetworkActivity extends AppCompatActivity {
         } else {
             Toast.makeText(NetworkActivity.this, "Discover Device couldn't work.", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     public void enableDiscoverability(View view) {
