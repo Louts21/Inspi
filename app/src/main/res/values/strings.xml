@@ -8,6 +8,7 @@
     <string name="button_memo_gallery">Your memo gallery</string>
 
     <string name="text_memo">Empty</string>
+    <string name="text_memo_title">Empty</string>
     <string name="button_save">Save</string>
 
     <string name="button_discover">Scan for devices</string>

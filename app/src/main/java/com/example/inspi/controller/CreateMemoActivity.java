@@ -23,14 +23,38 @@ import java.util.UUID;
 
 import static android.os.storage.StorageManager.ACTION_MANAGE_STORAGE;
 
+/**
+ * This class allows the user to create memos.
+ */
 public class CreateMemoActivity extends AppCompatActivity {
 
+    /**
+     * This long number declares an amount of mb for
+     * the memos.
+     */
     private static long NUM_BYTES_NEEDED_FOR_MY_APP;
 
+    /**
+     * This object is the context of the current device.
+     */
     private Context context;
 
+    /**
+     * We need this editText-object to manipulate
+     * the one on the view object of activity_create_memo.
+     */
     private EditText memoEditText;
 
+    /**
+     * We need this editText-object to manipulate
+     * the one on the view object of activity_create_memo.
+     */
+    private EditText memoTitleField;
+
+    /**
+     * This is an object of the model file.
+     * It is needed to use the methods of file (class).
+     */
     private com.example.inspi.model.File file;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -39,6 +63,7 @@ public class CreateMemoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_memo);
         memoEditText = findViewById(R.id.memoTextField);
+        memoTitleField = findViewById(R.id.memoTitle);
         context = getApplicationContext();
         file = new com.example.inspi.model.File();
         NUM_BYTES_NEEDED_FOR_MY_APP = 1024 * 1024 * 10L;
@@ -49,6 +74,10 @@ public class CreateMemoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method says the device how much space (MB) we need and claims it for us.
+     * @throws IOException might throw an IOException.
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void space() throws IOException {
         StorageManager storageManager = getApplicationContext().getSystemService(StorageManager.class);
@@ -79,7 +108,7 @@ public class CreateMemoActivity extends AppCompatActivity {
      * @param view is a View-Object which we need to combine it to the button in the XML file.
      */
     public void save(View view) {
-        try (FileOutputStream fos = context.openFileOutput(file.getFileName(getAddress()), Context.MODE_PRIVATE)) {
+        try (FileOutputStream fos = context.openFileOutput(file.getFileName(getAddress(), memoTitleField.getText().toString()), Context.MODE_PRIVATE)) {
             fos.write(memoEditText.getText().toString().getBytes());
             Toast.makeText(CreateMemoActivity.this, "Saved", Toast.LENGTH_SHORT).show();
         } catch (IOException ioe) {

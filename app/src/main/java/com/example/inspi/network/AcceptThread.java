@@ -11,9 +11,20 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.UUID;
 
+/**
+ * This is the class which allows other devices to connect to this device.
+ * This is the "Server".
+ */
 public class AcceptThread extends Thread implements IFNetwork {
+    /**
+     * This bluetoothServerSocket is needed to create a connection.
+     */
     private final BluetoothServerSocket bluetoothServerSocket;
 
+    /**
+     * This method crates an UUID and decelerates the bluetoothServerSocket.
+     * @param bluetoothAdapter is needed from networkActivity.
+     */
     public AcceptThread(BluetoothAdapter bluetoothAdapter) {
         BluetoothServerSocket tmp = null;
         try {
@@ -27,7 +38,7 @@ public class AcceptThread extends Thread implements IFNetwork {
     @Override
     public void run() {
         super.run();
-        BluetoothSocket socket = null;
+        BluetoothSocket socket;
         while (true) {
             try {
                 socket = bluetoothServerSocket.accept();
@@ -44,11 +55,14 @@ public class AcceptThread extends Thread implements IFNetwork {
         }
     }
 
+    @Override
     public void manageMyConnectedSocket(BluetoothSocket bluetoothSocket) {
 
     }
 
-    //Closes the socket
+    /**
+     * The sockets will be closed here.
+     */
     public void cancel() {
         try {
             bluetoothServerSocket.close();

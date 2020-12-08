@@ -18,12 +18,26 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * This class shows all memos the user has created.
+ */
 public class MemoGallery extends AppCompatActivity {
 
+    /**
+     * This will be the context-object of the current device.
+     */
     private Context context;
 
+    /**
+     * We need this textView-object to manipulate
+     * the one on the view object of activity_memo_gallery.
+     */
     private TextView memoTextView;
 
+    /**
+     * We need this editText-object to manipulate
+     * the one on the view object of activity_memo_gallery.
+     */
     private EditText memoEditText;
 
     @Override
@@ -35,10 +49,19 @@ public class MemoGallery extends AppCompatActivity {
         context = getApplicationContext();
     }
 
+    /**
+     * This class can find your memo and open it.
+     * It will tell you if it could'nt find it.
+     * @param view is needed to activate it onClick().
+     * @throws FileNotFoundException might be thrown if it cant find the file.
+     */
     public void findMemoAndOpen(View view) throws FileNotFoundException {
         String[] files = context.fileList();
+        int counter1 = 0;
+        int counter2 = 0;
         for (String s: files) {
             if (s.contains(memoEditText.getText())) {
+                counter1--;
                 Toast.makeText(MemoGallery.this, "Could be found", Toast.LENGTH_SHORT).show();
                 FileInputStream fileInputStream = context.openFileInput(s);
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
@@ -55,8 +78,12 @@ public class MemoGallery extends AppCompatActivity {
                     memoTextView.setText(stringBuilder.toString());
                 }
             } else {
-                Toast.makeText(MemoGallery.this, "Could not be found", Toast.LENGTH_SHORT).show();
+                counter1++;
+                counter2++;
             }
+        }
+        if (counter1 == counter2) {
+            Toast.makeText(MemoGallery.this, "Could not be found", Toast.LENGTH_SHORT).show();
         }
     }
 }

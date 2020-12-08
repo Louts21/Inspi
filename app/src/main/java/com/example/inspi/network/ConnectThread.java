@@ -12,21 +12,51 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * This class creates a connection with another device.
+ * This is the "Client".
+ */
 public class ConnectThread extends Thread implements IFNetwork {
+    /**
+     * This bluetoothSocket is needed to connect to another device.
+     */
     private final BluetoothSocket bluetoothSocket;
+
+    /**
+     * Here is the information about the other device.
+     */
     private final BluetoothDevice bluetoothDevice;
+
+    /**
+     * This object is from NetworkActivity and is needed to continue the connection.
+     */
     private final BluetoothAdapter bluetoothAdapter;
 
-    // Will be stored like the pictures and memos
-    // This map saves the name of the other devices and when he connected with him (last date)
+    /**
+     * Saves when and how the device connected in a while.
+     */
     private Map<String, Date> rememberMap = new HashMap<>();
 
-    // Will be saved into rememberMap and is the current date and time
+    /**
+     * Is needed to tell the current date.
+     */
     private Date date = new Date();
 
+    /**
+     * Do I need it?
+     */
     private InputStream inputStream;
+
+    /**
+     * Is needed to transfer data to another device
+     */
     private OutputStream outputStream;
 
+    /**
+     *
+     * @param device
+     * @param bluetoothAdapter
+     */
     public ConnectThread(BluetoothDevice device, BluetoothAdapter bluetoothAdapter) {
         BluetoothSocket tmp = null;
         this.bluetoothDevice = device;
@@ -78,6 +108,9 @@ public class ConnectThread extends Thread implements IFNetwork {
         this.outputStream = outputStream;
     }
 
+    /**
+     * Cancels all sockets in this class.
+     */
     public void cancel() {
         try {
             bluetoothSocket.close();

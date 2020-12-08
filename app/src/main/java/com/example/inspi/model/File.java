@@ -14,7 +14,7 @@ public class File implements IFModel {
         return format.format(calendar.getTime());
     }
 
-    public String getFileName(String address) {
-        return currentTimeGetter() + " " + address;
+    public String getFileName(String address, String title) {
+        return currentTimeGetter() + " " + address + " " + title;
     }
 }

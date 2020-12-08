@@ -18,15 +18,40 @@ import com.example.inspi.R;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This is the class which allows the user to view other devices and being discoverable.
+ */
 public class NetworkActivity extends AppCompatActivity {
 
-    private final BluetoothAdapter BLUETOOTHADAPTER = BluetoothAdapter.getDefaultAdapter();
+    /**
+     * This is a normal bluetoothAdapter to discover devices and to activate bluetooth within the application.
+     */
+    private final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+    /**
+     * I have no idea what this is for.
+     */
     private final int REQUEST_ENABLE_BT = 0;
 
+    /**
+     * All discovered devices will be saved here.
+     */
     private Set<BluetoothDevice> foundDevices = new HashSet<>();
+
+    /**
+     * We need this textView-object to manipulate
+     * the one on the view object of activity_network.
+     */
     private TextView deviceTextView;
+
+    /**
+     * It saves the name of a discovered device.
+     */
     private String deviceString;
 
+    /**
+     * This BroadcastReceiver is needed to find other devices.
+     */
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -35,8 +60,6 @@ public class NetworkActivity extends AppCompatActivity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device != null) {
                     if (device.getName() != null) {
-                        String deviceName = device.getName();
-                        String deviceHardwareAddress = device.getAddress();
                         foundDevices.add(device);
                     }
                 }
@@ -44,8 +67,12 @@ public class NetworkActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * This method allows the user to discover devices.
+     * @param view needs a view-object to use onClick().
+     */
     public void openDiscoverDevices(View view) {
-        boolean answer = BLUETOOTHADAPTER.startDiscovery();
+        boolean answer = bluetoothAdapter.startDiscovery();
         if (answer) {
             Toast.makeText(NetworkActivity.this, "Discover Devices", Toast.LENGTH_SHORT).show();
             for (BluetoothDevice bluetoothDevice: foundDevices) {
@@ -57,6 +84,10 @@ public class NetworkActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Allows other devices to find the current device.
+     * @param view needed to use onClick().
+     */
     public void enableDiscoverability(View view) {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
@@ -69,11 +100,11 @@ public class NetworkActivity extends AppCompatActivity {
         setContentView(R.layout.activity_network);
 
         // Test if the device supports Bluetooth
-        if (BLUETOOTHADAPTER == null) {
+        if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth.
             Toast.makeText(NetworkActivity.this, "Bluetooth is not available", Toast.LENGTH_SHORT).show();
         } else {
-            if (!BLUETOOTHADAPTER.isEnabled()) {
+            if (!bluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
