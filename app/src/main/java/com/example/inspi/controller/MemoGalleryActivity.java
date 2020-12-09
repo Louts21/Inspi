@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * This class shows all memos the user has created.
  */
-public class MemoGallery extends AppCompatActivity {
+public class MemoGalleryActivity extends AppCompatActivity {
 
     /**
      * This will be the context-object of the current device.
@@ -62,7 +62,7 @@ public class MemoGallery extends AppCompatActivity {
         for (String s: files) {
             if (s.contains(memoEditText.getText())) {
                 counter1--;
-                Toast.makeText(MemoGallery.this, "Could be found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MemoGalleryActivity.this, "Could be found", Toast.LENGTH_SHORT).show();
                 FileInputStream fileInputStream = context.openFileInput(s);
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
                 StringBuilder stringBuilder = new StringBuilder();
@@ -83,7 +83,7 @@ public class MemoGallery extends AppCompatActivity {
             }
         }
         if (counter1 == counter2) {
-            Toast.makeText(MemoGallery.this, "Could not be found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MemoGalleryActivity.this, "Could not be found", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -2,7 +2,6 @@
     <string name="app_name">Inspi</string>
     <string name="button_connection">Connect to a device</string>
     <string name="button_camera">Use camera</string>
-    <string name="button_picture">Take gallery picture</string>
     <string name="button_memo">Create memo</string>
     <string name="button_picture_gallery">Your picture gallery</string>
     <string name="button_memo_gallery">Your memo gallery</string>
@@ -14,6 +13,8 @@
     <string name="button_discover">Scan for devices</string>
     <string name="button_discoverability">Activate discoverability</string>
     <string name="textView_devices">Please press Discover</string>
+    <string name="button_connect">Connect</string>
+    <string name="editText_mac">Empty</string>
 
     <string name="text_memo_name">Empty</string>
     <string name="button_open">Open</string>

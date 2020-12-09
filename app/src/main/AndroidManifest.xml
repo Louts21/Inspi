@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".controller.MemoGallery"
+            android:name=".controller.MemoGalleryActivity"
             android:parentActivityName=".controller.MainActivity"
             tools:targetApi="jelly_bean">
             <meta-data

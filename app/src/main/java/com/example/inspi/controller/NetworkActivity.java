@@ -3,26 +3,21 @@ package com.example.inspi.controller;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.inspi.R;
-
-import java.util.HashSet;
-import java.util.Set;
+import com.example.inspi.network.IFNetwork;
+import com.example.inspi.network.ImplNetwork;
 
 /**
  * This is the class which allows the user to view other devices and being discoverable.
  */
 public class NetworkActivity extends AppCompatActivity {
-
     /**
      * This is a normal bluetoothAdapter to discover devices and to activate bluetooth within the application.
      */
@@ -34,9 +29,9 @@ public class NetworkActivity extends AppCompatActivity {
     private final int REQUEST_ENABLE_BT = 0;
 
     /**
-     * All discovered devices will be saved here.
+     * EditText to use the input of the user.
      */
-    private Set<BluetoothDevice> foundDevices = new HashSet<>();
+    private EditText connectEditText;
 
     /**
      * We need this textView-object to manipulate
@@ -45,43 +40,16 @@ public class NetworkActivity extends AppCompatActivity {
     private TextView deviceTextView;
 
     /**
-     * It saves the name of a discovered device.
+     * Object ifNetwork (Interface) of ImplNetwork (class).
      */
-    private String deviceString;
-
-    /**
-     * This BroadcastReceiver is needed to find other devices.
-     */
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (device != null) {
-                    if (device.getName() != null) {
-                        foundDevices.add(device);
-                    }
-                }
-            }
-        }
-    };
+    private IFNetwork ifNetwork;
 
     /**
      * This method allows the user to discover devices.
      * @param view needs a view-object to use onClick().
      */
     public void openDiscoverDevices(View view) {
-        boolean answer = bluetoothAdapter.startDiscovery();
-        if (answer) {
-            Toast.makeText(NetworkActivity.this, "Discover Devices", Toast.LENGTH_SHORT).show();
-            for (BluetoothDevice bluetoothDevice: foundDevices) {
-                deviceString = bluetoothDevice.getName() + bluetoothDevice.getAddress();
-            }
-            deviceTextView.setText(deviceString);
-        } else {
-            Toast.makeText(NetworkActivity.this, "Discover Device couldn't work.", Toast.LENGTH_SHORT).show();
-        }
+        ifNetwork.discoverDevices(bluetoothAdapter);
     }
 
     /**
@@ -89,9 +57,15 @@ public class NetworkActivity extends AppCompatActivity {
      * @param view needed to use onClick().
      */
     public void enableDiscoverability(View view) {
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-        startActivity(discoverableIntent);
+        ifNetwork.discoverability();
+    }
+
+    /**
+     * This method starts the transfer of data.
+     * @param view is needed for toClick().
+     */
+    public void openConnect(View view) {
+        //Todo
     }
 
     @Override
@@ -110,9 +84,9 @@ public class NetworkActivity extends AppCompatActivity {
             }
         }
 
-        deviceTextView = findViewById(R.id.textView);
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(receiver, filter);
+        connectEditText = findViewById(R.id.macEditText);
+        deviceTextView = findViewById(R.id.deviceTextView);
+        ifNetwork = new ImplNetwork(this, deviceTextView, connectEditText);
     }
 
     @Override
@@ -130,8 +104,6 @@ public class NetworkActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        // Don't forget to unregister the ACTION_FOUND receiver.
-        unregisterReceiver(receiver);
+        ifNetwork.stopReceiver(this);
     }
 }

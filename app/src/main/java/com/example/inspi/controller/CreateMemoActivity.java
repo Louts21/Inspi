@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.inspi.R;
+import com.example.inspi.model.File;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,12 +52,6 @@ public class CreateMemoActivity extends AppCompatActivity {
      */
     private EditText memoTitleField;
 
-    /**
-     * This is an object of the model file.
-     * It is needed to use the methods of file (class).
-     */
-    private com.example.inspi.model.File file;
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +60,6 @@ public class CreateMemoActivity extends AppCompatActivity {
         memoEditText = findViewById(R.id.memoTextField);
         memoTitleField = findViewById(R.id.memoTitle);
         context = getApplicationContext();
-        file = new com.example.inspi.model.File();
         NUM_BYTES_NEEDED_FOR_MY_APP = 1024 * 1024 * 10L;
         try {
             space();
@@ -97,7 +91,7 @@ public class CreateMemoActivity extends AppCompatActivity {
      */
     @SuppressLint("HardwareIds")
     public String getAddress() {
-        WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
         return info.getMacAddress();
     }
@@ -107,8 +101,9 @@ public class CreateMemoActivity extends AppCompatActivity {
      * It uses the model file.
      * @param view is a View-Object which we need to combine it to the button in the XML file.
      */
-    public void save(View view) {
-        try (FileOutputStream fos = context.openFileOutput(file.getFileName(getAddress(), memoTitleField.getText().toString()), Context.MODE_PRIVATE)) {
+    public void openSave(View view) {
+        File file = new File(getAddress(), memoTitleField.getText().toString());
+        try (FileOutputStream fos = context.openFileOutput(file.getFileName(), Context.MODE_PRIVATE)) {
             fos.write(memoEditText.getText().toString().getBytes());
             Toast.makeText(CreateMemoActivity.this, "Saved", Toast.LENGTH_SHORT).show();
         } catch (IOException ioe) {
