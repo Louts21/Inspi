@@ -18,5 +18,14 @@
 
     <string name="text_memo_name">Empty</string>
     <string name="button_open">Open</string>
-    <string name="textView_memo">Please press select a name and press Open.</string>
+    <string name="textView_memo">Please write a name and press Open.</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_edit">Edit</string>
+    <string name="editText_memo">Please write a name and press Open</string>
+    <string name="button_gallery_save">Save</string>
+
+    <string name="imageView_create_picture"/>
+    <string name="plainText_create_picture">Empty</string>
+    <string name="editText_create_picture">Empty</string>
+    <string name="button_save_create_picture">Save</string>
 </resources>

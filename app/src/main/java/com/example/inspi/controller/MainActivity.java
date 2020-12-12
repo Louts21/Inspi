@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -19,7 +18,6 @@ import com.example.inspi.R;
  * Here starts the user of my application.
  */
 public class MainActivity extends AppCompatActivity {
-
     /**
      * Request to take one picture.
      */
@@ -61,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Opens the activity: CameraActivity.
+     * Which allows the user to take pictures and write a file/memo to it.
+     * @param view needs a view-object to use onClick().
+     */
     @SuppressLint("ShowToast")
     public void openCamera(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -78,7 +81,9 @@ public class MainActivity extends AppCompatActivity {
             if (data != null) {
                 Bundle extras = data.getExtras();
                 if (extras != null) {
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    Intent intent = new Intent(this, CreatePictureActivity.class);
+                    intent.putExtras(extras);
+                    startActivity(intent);
                 }
             }
         }
