@@ -25,6 +25,8 @@ public class CreatePictureActivity extends AppCompatActivity {
 
     private EditText memoTitle;
 
+    private int counter = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,12 +54,20 @@ public class CreatePictureActivity extends AppCompatActivity {
     }
 
     /**
+     * Generates an id for each picture.
+     * @return returns an integer.
+     */
+    public int idFactory() {
+        return counter++;
+    }
+
+    /**
      * Saves the picture publicly.
      * @param view is needed to use it by onClick() of activity_create_picture.
      */
     @SuppressLint("ShowToast")
     public void save(View view) {
-        Picture picture = new Picture(getAddress(), memoTitle.getText().toString());
+        Picture picture = new Picture(getAddress(), memoTitle.getText().toString(), idFactory());
         picture.setText(memoText.getText().toString());
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT);
     }

@@ -8,23 +8,38 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.inspi.controller.CreateMemoActivity;
+import com.example.inspi.controller.NetworkActivity;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import static android.bluetooth.BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
+import static android.bluetooth.BluetoothAdapter.ACTION_DISCOVERY_STARTED;
+import static android.bluetooth.BluetoothDevice.ACTION_FOUND;
 
 /**
  * Implementation of IFNetwork (Interface).
  * This class manages everything about connection, bluetooth and data transfer.
  */
 public class ImplNetwork implements IFNetwork {
+    /**
+     * This Log-Tag is specific created for this class to find issues.
+     */
+    private static final String TAG = "INSPI_DEBUG_TAG_BT";
+
     /**
      * All discovered devices will be saved here.
      */
@@ -52,6 +67,12 @@ public class ImplNetwork implements IFNetwork {
     private final EditText connectEditText;
 
     /**
+     * BluetoothAdapter of NetworkActivity.
+     * Is needed to start the discover of other devices.
+     */
+    private final BluetoothAdapter bluetoothAdapter;
+
+    /**
      * This BroadcastReceiver is needed to find other devices.
      */
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -60,10 +81,11 @@ public class ImplNetwork implements IFNetwork {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
+
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device != null) {
-                    Toast.makeText(context, "Device found " + device.getName(), Toast.LENGTH_SHORT);
+                    Toast.makeText(context, "Device found " + device.getName(), Toast.LENGTH_SHORT).show();
                     foundDevices.add(device);
                 }
             } else {
@@ -76,145 +98,62 @@ public class ImplNetwork implements IFNetwork {
                         }
                         deviceTextView.setText(deviceString);
                         Toast.makeText(context, "Discover Devices finished", Toast.LENGTH_SHORT).show();
+                        stopReceiver(context);
                     }
                 }
             }
         }
     };
 
-    public ImplNetwork(Context context, TextView textView, EditText editText) {
+    /**
+     * Constructor of ImplNetwork.
+     * @param context context of NetworkActivity.
+     * @param textView this textView shows the discovered devices.
+     * @param editText this editText allows the user to write down which device he will connect.
+     * @param bluetoothAdapter is needed to start the discover for devices.
+     */
+    public ImplNetwork(Context context, TextView textView, EditText editText, BluetoothAdapter bluetoothAdapter) {
         this.context = context;
         this.deviceTextView = textView;
         this.connectEditText = editText;
+        this.bluetoothAdapter = bluetoothAdapter;
     }
 
+
+    @Override
     public void discoverDevices(BluetoothAdapter bluetoothAdapter) {
         IntentFilter filter = new IntentFilter();
 
-        filter.addAction(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(ACTION_FOUND);
+        filter.addAction(ACTION_DISCOVERY_STARTED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
         context.registerReceiver(receiver, filter);
-        bluetoothAdapter.startDiscovery();
+        startDiscovery();
     }
 
+    @Override
     public void discoverability() {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         context.startActivity(discoverableIntent);
     }
 
-    public void stopReceiver(Context context) {
-        context.unregisterReceiver(receiver);
+    @Override
+    public void startDiscovery() {
+        if (bluetoothAdapter.startDiscovery()) {
+            Log.d(TAG, "Successfully started Bluetooth discovery");
+        } else {
+            Log.d(TAG, "Could not start Bluetooth discovery");
+        }
     }
 
-    /**
-     * Innerclass of ImplNetwork.
-     * Tries to connect to another device.
-     */
-    private static class ConnectThread extends Thread {
-        /**
-         * This bluetoothSocket is needed to connect to another device.
-         */
-        private final BluetoothSocket bluetoothSocket;
+    public void transfer() {
 
-        /**
-         * Here is the information about the other device.
-         */
-        private final BluetoothDevice bluetoothDevice;
+    }
 
-        /**
-         * This object is from NetworkActivity and is needed to continue the connection.
-         */
-        private final BluetoothAdapter bluetoothAdapter;
-
-        /**
-         * Saves when and how the device connected in a while.
-         */
-        private Map<String, String> rememberMap = new HashMap<>();
-
-        /**
-         * Is needed to transfer data to another device
-         */
-        private final OutputStream outputStream;
-
-        /**
-         * Context of our application.
-         */
-        private final Context context;
-
-        /**
-         * Constructor of ConnectThread.
-         * @param device is the device which we want to connect.
-         * @param bluetoothAdapter is needed to transfer data.
-         */
-        public ConnectThread(BluetoothDevice device, BluetoothAdapter bluetoothAdapter, Context context) {
-            BluetoothSocket tmp = null;
-            OutputStream outputStream = null;
-            this.bluetoothDevice = device;
-            this.bluetoothAdapter = bluetoothAdapter;
-            this.rememberMap.put(device.getAddress(), null);
-
-            try {
-                tmp = device.createRfcommSocketToServiceRecord(UUID.fromString("5cb2442e-88aa-4eab-a044-2955e0de3478"));
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-            bluetoothSocket = tmp;
-
-            try {
-                outputStream = bluetoothSocket.getOutputStream();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-            this.outputStream = outputStream;
-            this.context = context;
-        }
-
-        @Override
-        public void run() {
-            super.run();
-            bluetoothAdapter.cancelDiscovery();
-
-            try {
-                bluetoothSocket.connect();
-            } catch (IOException ioe) {
-                try {
-                    bluetoothSocket.close();
-                } catch (IOException closeException) {
-                    closeException.printStackTrace();
-                }
-            }
-            manageMyConnectedSocket(bluetoothSocket);
-            cancel();
-        }
-
-        @SuppressLint("ShowToast")
-        public void manageMyConnectedSocket(BluetoothSocket bluetoothSocket) {
-            //Todo
-            String[] files = context.fileList();
-            try {
-                for (String file: files) {
-                    outputStream.write(file.getBytes());
-                }
-            } catch (IOException ioe) {
-                Toast.makeText(context, "Couldn't send data", Toast.LENGTH_SHORT);
-            }
-            //rememberMap.put(bluetoothDevice.getAddress(), file.currentTimeGetter());
-            Toast.makeText(context, "Data send", Toast.LENGTH_SHORT);
-        }
-
-        /**
-         * Cancels all sockets in this class.
-         */
-        public void cancel() {
-            try {
-                bluetoothSocket.close();
-                outputStream.close();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
+    @Override
+    public void stopReceiver(Context context) {
+        context.unregisterReceiver(receiver);
     }
 }

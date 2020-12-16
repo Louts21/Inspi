@@ -20,6 +20,9 @@ import com.example.inspi.model.File;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static android.os.storage.StorageManager.ACTION_MANAGE_STORAGE;
@@ -28,7 +31,6 @@ import static android.os.storage.StorageManager.ACTION_MANAGE_STORAGE;
  * This class allows the user to create memos.
  */
 public class CreateMemoActivity extends AppCompatActivity {
-
     /**
      * This long number declares an amount of mb for
      * the memos.
@@ -52,6 +54,11 @@ public class CreateMemoActivity extends AppCompatActivity {
      */
     private EditText memoTitleField;
 
+    /**
+     * Saves information of each File (object)
+     */
+    private Map<String, Date> fileMap;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +67,7 @@ public class CreateMemoActivity extends AppCompatActivity {
         memoEditText = findViewById(R.id.memoTextField);
         memoTitleField = findViewById(R.id.memoTitle);
         context = getApplicationContext();
+        fileMap = new HashMap<>();
         NUM_BYTES_NEEDED_FOR_MY_APP = 1024 * 1024 * 10L;
         try {
             space();
@@ -103,6 +111,7 @@ public class CreateMemoActivity extends AppCompatActivity {
      */
     public void openSave(View view) {
         File file = new File(getAddress(), memoTitleField.getText().toString());
+        fileMap.put(file.getFileTitle(), file.getFileCalendar());
         try (FileOutputStream fos = context.openFileOutput(file.getFileName(), Context.MODE_PRIVATE)) {
             fos.write(memoEditText.getText().toString().getBytes());
             Toast.makeText(CreateMemoActivity.this, "Saved", Toast.LENGTH_SHORT).show();

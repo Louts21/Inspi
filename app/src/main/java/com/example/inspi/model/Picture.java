@@ -21,6 +21,11 @@ public class Picture implements IFModel {
     private String text;
 
     /**
+     *
+     */
+    private final Integer pictureID;
+
+    /**
      * The current time and date.
      */
     private final Date pictureCalendar = Calendar.getInstance().getTime();
@@ -31,7 +36,8 @@ public class Picture implements IFModel {
      * @param address the MAC-Address of our device.
      * @param memo a memo related to the picture.
      */
-    public Picture(String address, String memo) {
+    public Picture(String address, String memo, int id) {
+        pictureID = id;
         text = memo;
         pictureName = currentTimeGetter() + " " + address;
     }
@@ -43,7 +49,7 @@ public class Picture implements IFModel {
     }
 
     /**
-     * Setter of pictureText (variable).
+     * Setter of pictureText (String-variable).
      * @param newText is the new memo for the picture.
      */
     public void setText(String newText) {
@@ -51,7 +57,7 @@ public class Picture implements IFModel {
     }
 
     /**
-     * Getter of pictureName.
+     * Getter of pictureName (String-variable).
      * @return returns a String.
      */
     public String getPictureName() {
@@ -59,10 +65,18 @@ public class Picture implements IFModel {
     }
 
     /**
-     * Getter of text (variable).
+     * Getter of text (String-variable).
      * @return returns a String.
      */
     public String getText() {
         return text;
+    }
+
+    /**
+     * Getter of pictureID (Integer variable).
+     * @return returns an integer.
+     */
+    public Integer getPictureID() {
+        return pictureID;
     }
 }

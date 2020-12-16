@@ -2,8 +2,13 @@ package com.example.inspi.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +18,9 @@ import android.widget.Toast;
 import com.example.inspi.R;
 import com.example.inspi.network.IFNetwork;
 import com.example.inspi.network.ImplNetwork;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is the class which allows the user to view other devices and being discoverable.
@@ -81,12 +89,13 @@ public class NetworkActivity extends AppCompatActivity {
             if (!bluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+
+
             }
         }
-
         connectEditText = findViewById(R.id.macEditText);
         deviceTextView = findViewById(R.id.deviceTextView);
-        ifNetwork = new ImplNetwork(this, deviceTextView, connectEditText);
+        ifNetwork = new ImplNetwork(this, deviceTextView, connectEditText, bluetoothAdapter);
     }
 
     @Override
@@ -98,6 +107,8 @@ public class NetworkActivity extends AppCompatActivity {
         } else if (resultCode == RESULT_CANCELED) {
             // Bluetooth is not working
             Toast.makeText(NetworkActivity.this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == 300) {
+            Toast.makeText(NetworkActivity.this, "You can be discovered", Toast.LENGTH_SHORT).show();
         }
     }
 

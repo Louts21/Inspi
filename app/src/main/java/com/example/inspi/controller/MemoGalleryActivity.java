@@ -55,13 +55,19 @@ public class MemoGalleryActivity extends AppCompatActivity {
      * Button-object which allows me to change the visibility
      * of an object of activity_memo_gallery.
      */
-    private Button memoButton1;
+    private Button memoEditButton1;
 
     /**
      * Button-object which allows me to change the visibility
      * of an object of activity_memo_gallery.
      */
-    private Button memoButton2;
+    private Button memoSaveButton2;
+
+    /**
+     * Button-object which allows me to change the visibility
+     * of an object of activity_memo_gallery.
+     */
+    private Button memoDeleteButton3;
 
     /**
      * Saves the title of a memo.
@@ -75,10 +81,13 @@ public class MemoGalleryActivity extends AppCompatActivity {
         memoTextView = findViewById(R.id.memoSearchResult);
         memoEditText1 = findViewById(R.id.memoSearch);
         memoEditText2 = findViewById(R.id.editTextMemoGallery);
-        memoButton1 = findViewById(R.id.editButton);
-        memoButton2 = findViewById(R.id.saveGalleryButton);
+        memoEditButton1 = findViewById(R.id.editButton);
+        memoSaveButton2 = findViewById(R.id.saveGalleryButton);
+        memoDeleteButton3 = findViewById(R.id.cancelButton);
+        memoDeleteButton3.setVisibility(View.INVISIBLE);
+        memoEditButton1.setVisibility(View.INVISIBLE);
         memoEditText2.setVisibility(View.INVISIBLE);
-        memoButton2.setVisibility(View.INVISIBLE);
+        memoSaveButton2.setVisibility(View.INVISIBLE);
         context = getApplicationContext();
     }
 
@@ -117,6 +126,9 @@ public class MemoGalleryActivity extends AppCompatActivity {
         }
         if (counter1 == counter2) {
             Toast.makeText(MemoGalleryActivity.this, "Could not be found", Toast.LENGTH_SHORT).show();
+        } else {
+            memoDeleteButton3.setVisibility(View.VISIBLE);
+            memoEditButton1.setVisibility(View.VISIBLE);
         }
     }
 
@@ -141,6 +153,8 @@ public class MemoGalleryActivity extends AppCompatActivity {
             Toast.makeText(MemoGalleryActivity.this, "Could not be found", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(MemoGalleryActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+            memoEditButton1.setVisibility(View.INVISIBLE);
+            memoDeleteButton3.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -156,10 +170,6 @@ public class MemoGalleryActivity extends AppCompatActivity {
         for (String fileName: file) {
             if (fileName.contains(memoEditText1.getText())) {
                 counter1--;
-                memoTextView.setVisibility(View.INVISIBLE);
-                memoEditText2.setVisibility(View.VISIBLE);
-                memoButton1.setVisibility(View.INVISIBLE);
-                memoButton2.setVisibility(View.VISIBLE);
                 FileInputStream fileInputStream = context.openFileInput(fileName);
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
                 StringBuilder stringBuilder = new StringBuilder();
@@ -183,6 +193,10 @@ public class MemoGalleryActivity extends AppCompatActivity {
         if (counter1 == counter2) {
             Toast.makeText(MemoGalleryActivity.this, "Could not be found", Toast.LENGTH_SHORT).show();
         } else {
+            memoTextView.setVisibility(View.INVISIBLE);
+            memoEditText2.setVisibility(View.VISIBLE);
+            memoEditButton1.setVisibility(View.INVISIBLE);
+            memoSaveButton2.setVisibility(View.VISIBLE);
             Toast.makeText(MemoGalleryActivity.this, "Could be found", Toast.LENGTH_SHORT).show();
         }
     }
@@ -205,8 +219,9 @@ public class MemoGalleryActivity extends AppCompatActivity {
         } finally {
             memoTextView.setVisibility(View.VISIBLE);
             memoEditText2.setVisibility(View.INVISIBLE);
-            memoButton1.setVisibility(View.VISIBLE);
-            memoButton2.setVisibility(View.INVISIBLE);
+            memoEditButton1.setVisibility(View.INVISIBLE);
+            memoSaveButton2.setVisibility(View.INVISIBLE);
+            memoDeleteButton3.setVisibility(View.INVISIBLE);
         }
     }
 }

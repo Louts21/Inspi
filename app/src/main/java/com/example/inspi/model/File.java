@@ -16,6 +16,16 @@ public class File implements IFModel {
     private final String fileName;
 
     /**
+     * The title of the file which will be saved into the fileName (variable).
+     */
+    private final String fileTitle;
+
+    /**
+     * The address of the device which will be saved into the fileName (variable).
+     */
+    private final String fileAddress;
+
+    /**
      * The date when the file name was created.
      */
     private final Date fileCalendar = Calendar.getInstance().getTime();
@@ -26,6 +36,8 @@ public class File implements IFModel {
      * @param title Title of the created memo.
      */
     public File(String address, String title) {
+        fileTitle = title;
+        fileAddress = address;
         fileName = currentTimeGetter() + " " + address + " " + title;
     }
 
@@ -41,5 +53,29 @@ public class File implements IFModel {
      */
     public String getFileName() {
         return fileName;
+    }
+
+    /**
+     * Getter of fileAddress (variable).
+     * @return returns a String.
+     */
+    public String getFileAddress() {
+        return fileAddress;
+    }
+
+    /**
+     * Getter of fileTitle (variable).
+     * @return returns a String.
+     */
+    public String getFileTitle() {
+        return fileTitle;
+    }
+
+    /**
+     * Getter of fileCalendar (variable).
+     * @return returns a Date-Object.
+     */
+    public Date getFileCalendar() {
+        return fileCalendar;
     }
 }

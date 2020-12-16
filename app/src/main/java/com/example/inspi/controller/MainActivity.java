@@ -50,12 +50,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * This method opens the activity: MemoGallery.
+     * This method opens the activity: MemoGalleryActivity.
      * Which allows the user to view his memos/files.
      * @param view needs a view-object to use onClick().
      */
     public void openMemoGallery(View view) {
         Intent intent = new Intent(this, MemoGalleryActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * This method opens the activity: PictureGalleryActivity.
+     * Which allows the user to view his pictures and there memos.
+     * @param view needs a view-object to use onClick().
+     */
+    public void openPictureGallery(View view) {
+        Intent intent = new Intent(this, PictureGalleryActivity.class);
         startActivity(intent);
     }
 
