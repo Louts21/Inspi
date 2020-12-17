@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,8 @@ public class NetworkActivity extends AppCompatActivity {
      */
     private final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+    private Set<BluetoothDevice> pairedDevices;
+
     /**
      * I have no idea what this is for.
      */
@@ -46,6 +49,12 @@ public class NetworkActivity extends AppCompatActivity {
      * the one on the view object of activity_network.
      */
     private TextView deviceTextView;
+
+    /**
+     * Needed to make the discoverDevices button
+     * unusable.
+     */
+    private Button discoverButton;
 
     /**
      * Object ifNetwork (Interface) of ImplNetwork (class).
@@ -76,6 +85,7 @@ public class NetworkActivity extends AppCompatActivity {
         //Todo
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,12 +99,18 @@ public class NetworkActivity extends AppCompatActivity {
             if (!bluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-
-
+            } else {
+                pairedDevices = bluetoothAdapter.getBondedDevices();
             }
         }
         connectEditText = findViewById(R.id.macEditText);
         deviceTextView = findViewById(R.id.deviceTextView);
+        discoverButton = findViewById(R.id.scanButton);
+        for (BluetoothDevice device: pairedDevices) {
+            deviceTextView.setText(device.getAddress() + '\n');
+        }
+        // As long as it wont work i will disable it.
+        discoverButton.setEnabled(false);
         ifNetwork = new ImplNetwork(this, deviceTextView, connectEditText, bluetoothAdapter);
     }
 

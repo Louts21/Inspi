@@ -21,7 +21,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".controller.PictureGalleryActivity"></activity>
+        <activity
+            android:name=".controller.PictureGalleryActivity"
+            android:parentActivityName=".controller.MainActivity"
+            tools:targetApi="jelly_bean">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controller.MainActivity"/>
+        </activity>
         <activity
             android:name=".controller.CreatePictureActivity"
             android:parentActivityName=".controller.MainActivity"

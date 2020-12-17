@@ -1,11 +1,13 @@
 package com.example.inspi.controller;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -84,8 +86,8 @@ public class MemoGalleryActivity extends AppCompatActivity {
         memoEditButton1 = findViewById(R.id.editButton);
         memoSaveButton2 = findViewById(R.id.saveGalleryButton);
         memoDeleteButton3 = findViewById(R.id.cancelButton);
-        memoDeleteButton3.setVisibility(View.INVISIBLE);
-        memoEditButton1.setVisibility(View.INVISIBLE);
+        memoDeleteButton3.setEnabled(false);
+        memoEditButton1.setEnabled(false);
         memoEditText2.setVisibility(View.INVISIBLE);
         memoSaveButton2.setVisibility(View.INVISIBLE);
         context = getApplicationContext();
@@ -97,6 +99,7 @@ public class MemoGalleryActivity extends AppCompatActivity {
      * @param view is needed to activate it onClick().
      * @throws FileNotFoundException might be thrown if it cant find the file.
      */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void findMemoAndOpen(View view) throws FileNotFoundException {
         String[] files = context.fileList();
         int counter1 = 0;
@@ -127,8 +130,8 @@ public class MemoGalleryActivity extends AppCompatActivity {
         if (counter1 == counter2) {
             Toast.makeText(MemoGalleryActivity.this, "Could not be found", Toast.LENGTH_SHORT).show();
         } else {
-            memoDeleteButton3.setVisibility(View.VISIBLE);
-            memoEditButton1.setVisibility(View.VISIBLE);
+            memoDeleteButton3.setEnabled(true);
+            memoEditButton1.setEnabled(true);
         }
     }
 
@@ -153,8 +156,8 @@ public class MemoGalleryActivity extends AppCompatActivity {
             Toast.makeText(MemoGalleryActivity.this, "Could not be found", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(MemoGalleryActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
-            memoEditButton1.setVisibility(View.INVISIBLE);
-            memoDeleteButton3.setVisibility(View.INVISIBLE);
+            memoEditButton1.setEnabled(false);
+            memoDeleteButton3.setEnabled(false);
         }
     }
 
@@ -163,6 +166,7 @@ public class MemoGalleryActivity extends AppCompatActivity {
      * @param view is needed to use onClick() of activity_memo_gallery.
      * @throws FileNotFoundException might be thrown by finding the file.
      */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void openEdit(View view) throws FileNotFoundException {
         String[] file = context.fileList();
         int counter1 = 0;
@@ -205,6 +209,7 @@ public class MemoGalleryActivity extends AppCompatActivity {
      * Will be used after the user clicked Edit on activity_memo_gallery.
      * @param view is needed to use onClick() on activity_memo_gallery.
      */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @SuppressLint("SetTextI18n")
     public void openSave(View view) {
         context.deleteFile(fileName);
@@ -219,9 +224,10 @@ public class MemoGalleryActivity extends AppCompatActivity {
         } finally {
             memoTextView.setVisibility(View.VISIBLE);
             memoEditText2.setVisibility(View.INVISIBLE);
-            memoEditButton1.setVisibility(View.INVISIBLE);
+            memoEditButton1.setEnabled(false);
+            memoEditButton1.setVisibility(View.VISIBLE);
             memoSaveButton2.setVisibility(View.INVISIBLE);
-            memoDeleteButton3.setVisibility(View.INVISIBLE);
+            memoDeleteButton3.setEnabled(false);
         }
     }
 }
