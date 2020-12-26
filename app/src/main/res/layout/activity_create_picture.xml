@@ -33,24 +33,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewCreatePicture" />
 
-    <EditText
-        android:id="@+id/editTextMCreatePicture"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        android:text="@string/editText_create_picture"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSaveCreatePicture"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCreatePicture" />
-
     <Button
         android:id="@+id/buttonSaveCreatePicture"
         android:layout_width="wrap_content"

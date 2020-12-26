@@ -54,11 +54,6 @@ public class CreateMemoActivity extends AppCompatActivity {
      */
     private EditText memoTitleField;
 
-    /**
-     * Saves information of each File (object)
-     */
-    private Map<String, Date> fileMap;
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,19 +62,21 @@ public class CreateMemoActivity extends AppCompatActivity {
         memoEditText = findViewById(R.id.memoTextField);
         memoTitleField = findViewById(R.id.memoTitle);
         context = getApplicationContext();
-        fileMap = new HashMap<>();
         NUM_BYTES_NEEDED_FOR_MY_APP = 1024 * 1024 * 10L;
+        /*
         try {
             space();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+         */
     }
 
     /**
      * This method says the device how much space (MB) we need and claims it for us.
      * @throws IOException might throw an IOException.
      */
+    /*
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void space() throws IOException {
         StorageManager storageManager = getApplicationContext().getSystemService(StorageManager.class);
@@ -92,6 +89,7 @@ public class CreateMemoActivity extends AppCompatActivity {
             storageIntent.setAction(ACTION_MANAGE_STORAGE);
         }
     }
+     */
 
     /**
      * Let us get the MAC-Address of our device.
@@ -111,7 +109,6 @@ public class CreateMemoActivity extends AppCompatActivity {
      */
     public void openSave(View view) {
         File file = new File(getAddress(), memoTitleField.getText().toString());
-        fileMap.put(file.getFileTitle(), file.getFileCalendar());
         try (FileOutputStream fos = context.openFileOutput(file.getFileName(), Context.MODE_PRIVATE)) {
             fos.write(memoEditText.getText().toString().getBytes());
             Toast.makeText(CreateMemoActivity.this, "Saved", Toast.LENGTH_SHORT).show();

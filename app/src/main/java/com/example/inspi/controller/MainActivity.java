@@ -2,16 +2,24 @@ package com.example.inspi.controller;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.inspi.R;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This is the main class/activity.
@@ -22,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
      * Request to take one picture.
      */
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private String currentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +84,13 @@ public class MainActivity extends AppCompatActivity {
      * Which allows the user to take pictures and write a file/memo to it.
      * @param view needs a view-object to use onClick().
      */
-    @SuppressLint("ShowToast")
+    @SuppressLint("QueryPermissionsNeeded")
     public void openCamera(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException activityNotFoundException) {
-            Toast.makeText(this, "Camera not available", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Camera not available", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.inspi.model;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -16,14 +17,19 @@ public class Picture implements IFModel {
     private final String pictureName;
 
     /**
-     * Context to the picture.
+     * Title of a picture.
      */
-    private String text;
+    private String pictureTitle;
 
     /**
-     *
+     * Id of each picture.
      */
     private final Integer pictureID;
+
+    /**
+     * Bitmap of each picture.
+     */
+    private final Bitmap pictureBitmap;
 
     /**
      * The current time and date.
@@ -34,26 +40,21 @@ public class Picture implements IFModel {
      * Constructor of Picture (class).
      * Allows creating objects of Picture (class).
      * @param address the MAC-Address of our device.
-     * @param memo a memo related to the picture.
+     * @param title a title related to the picture.
+     * @param id a specific id for each picture.
+     * @param bitmap is the bitmap of each picture.
      */
-    public Picture(String address, String memo, int id) {
+    public Picture(String address, String title, int id, Bitmap bitmap) {
         pictureID = id;
-        text = memo;
-        pictureName = currentTimeGetter() + " " + address;
+        pictureTitle = title;
+        pictureBitmap = bitmap;
+        pictureName = currentTimeGetter() + " " + address + " " + pictureTitle;
     }
 
     @Override
     public String currentTimeGetter() {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         return format.format(pictureCalendar);
-    }
-
-    /**
-     * Setter of pictureText (String-variable).
-     * @param newText is the new memo for the picture.
-     */
-    public void setText(String newText) {
-        text = newText;
     }
 
     /**
@@ -65,11 +66,11 @@ public class Picture implements IFModel {
     }
 
     /**
-     * Getter of text (String-variable).
+     * Getter of pictureTitle (String-variable).
      * @return returns a String.
      */
-    public String getText() {
-        return text;
+    public String getPictureTitle() {
+        return pictureTitle;
     }
 
     /**
@@ -78,5 +79,13 @@ public class Picture implements IFModel {
      */
     public Integer getPictureID() {
         return pictureID;
+    }
+
+    /**
+     * Getter of pictureBitmap (Bitmap variable).
+     * @return returns the bitmap of our picture.
+     */
+    public Bitmap getPictureBitmap() {
+        return pictureBitmap;
     }
 }

@@ -1,7 +1,10 @@
 package com.example.inspi.network;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+
+import java.util.Set;
 
 /**
  * This is the interface of all classes which quest it is to send data over a connection.
@@ -23,6 +26,12 @@ public interface IFNetwork {
      * If shows if it fails or not.
      */
     void startDiscovery();
+
+    /**
+     * Transfers files to the paired device.
+     * @param pairedDevice needs the address of the other device to save it.
+     */
+    void transfer(BluetoothDevice pairedDevice, String title);
 
     /**
      * Unregister the receiver.

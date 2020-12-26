@@ -15,6 +15,7 @@
     <string name="textView_devices">Please press Discover</string>
     <string name="button_connect">Connect</string>
     <string name="editText_mac">Empty</string>
+    <string name="editText_title">Empty</string>
 
     <string name="text_memo_name">Empty</string>
     <string name="button_open">Open</string>
@@ -26,6 +27,7 @@
 
     <string name="imageView_create_picture" />
     <string name="plainText_create_picture">Empty</string>
-    <string name="editText_create_picture">Empty</string>
     <string name="button_save_create_picture">Save</string>
+
+    <string name="imageView_picture_gallery"/>
 </resources>
