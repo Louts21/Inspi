@@ -9,16 +9,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -67,8 +71,6 @@ public class ImplNetwork implements IFNetwork {
      * Is needed to start the discover of other devices.
      */
     private final BluetoothAdapter bluetoothAdapter;
-
-    private Map<String, String> transferMap = new HashMap<>();
 
     /**
      * This BroadcastReceiver is needed to find other devices.
@@ -157,23 +159,34 @@ public class ImplNetwork implements IFNetwork {
         context.unregisterReceiver(receiver);
     }
 
+    /**
+     * Inner class which will be used to send data to another device.
+     */
     private class ClientConnectThread extends Thread{
-
+        /**
+         * Is a socket which will be needed to transfer the data.
+         */
         private final BluetoothSocket bluetoothSocket;
 
-        private final BluetoothDevice bluetoothDevice;
-
+        /**
+         * Will be transferred to another device.
+         */
         private final String memoTitle;
 
-        private final Date calendar = Calendar.getInstance().getTime();
-
+        /**
+         * This tag will be shown if an error appears.
+         */
         private final static String TAG2 = "INSPI_DEBUG_TAG_CCT";
 
+        /**
+         * Is the constructor of ClientConnectThread (class).
+         * @param device is needed to create the socket.
+         * @param title is needed to get the file which will be send.
+         */
         public ClientConnectThread(BluetoothDevice device, String title) {
             // Use a temporary object that is later assigned to mmSocket
             // because mmSocket is final.
             BluetoothSocket tmp = null;
-            bluetoothDevice = device;
             memoTitle = title;
 
             try {
@@ -186,6 +199,7 @@ public class ImplNetwork implements IFNetwork {
             bluetoothSocket = tmp;
         }
 
+        @Override
         public void run() {
             // Cancel discovery because it otherwise slows down the connection.
             if (bluetoothAdapter.isDiscovering()) {
@@ -210,44 +224,39 @@ public class ImplNetwork implements IFNetwork {
             cancel();
         }
 
+        /**
+         * This method transfers the file/data to another device.
+         * @param bluetoothSocket is needed to get the O-Stream.
+         */
         private void manageMyConnectedSocket(BluetoothSocket bluetoothSocket) {
             DataOutputStream dataOutputStream;  //File and his title
-            DataInputStream dataInputStream;    //Callback
             try {
                 dataOutputStream = new DataOutputStream(new BufferedOutputStream(bluetoothSocket.getOutputStream()));
-                dataInputStream = new DataInputStream(new BufferedInputStream(bluetoothSocket.getInputStream()));
                 FileInputStream fileInputStream = context.openFileInput(memoTitle);
-                byte[] bytes = new byte[4096];
-                int count;
                 dataOutputStream.writeUTF(memoTitle);
-                while ((count = fileInputStream.read(bytes)) > 0) {
-                    dataOutputStream.write(bytes, 0, count);
-                }
-                while (true) {
-                    if (dataInputStream.readUTF().equals("Done")) {
-                        cancel();
-                        break;
+                dataOutputStream.flush();
+                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+                StringBuilder stringBuilder = new StringBuilder();
+                try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                    String line = reader.readLine();
+                    while (line != null) {
+                        stringBuilder.append(line).append('\n');
+                        line = reader.readLine();
                     }
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                } finally {
+                    dataOutputStream.writeUTF(stringBuilder.toString());
+                    dataOutputStream.flush();
                 }
             } catch (Exception e) {
                 Log.e(TAG2, "Cant get OStream as Client in manageMyConnectedSocket", e);
-            } finally {
-                if (transferMap.isEmpty()) {
-                    transferMap.put(bluetoothDevice.getAddress(), currentTimeGetter());
-                } else if (transferMap.containsKey(bluetoothDevice.getAddress())) {
-                    transferMap.remove(bluetoothDevice.getAddress());
-                    transferMap.put(bluetoothDevice.getAddress(), currentTimeGetter());
-                }
             }
         }
 
-        public String currentTimeGetter() {
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            return format.format(calendar);
-        }
-
-
-        // Closes the client socket and causes the thread to finish.
+        /**
+         * Closes the client socket and causes the thread to finish.
+         */
         public void cancel() {
             try {
                 bluetoothSocket.close();

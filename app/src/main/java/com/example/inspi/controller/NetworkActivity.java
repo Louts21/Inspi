@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,11 @@ public class NetworkActivity extends AppCompatActivity {
      */
     private TextView deviceTextView;
 
+    private Button connectButton;
+
+    /**
+     * The name of the memo which will be send to another device.
+     */
     private EditText memoName;
 
     /**
@@ -82,8 +88,10 @@ public class NetworkActivity extends AppCompatActivity {
      * @param view is needed for toClick().
      */
     public void openConnect(View view) {
+        connectButton.setEnabled(false);
         int counter1 = 0;
         int counter2 = 0;
+        int counter3 = 0;
         String[] files = this.fileList();
         for (BluetoothDevice device: pairedDevices) {
             if (connectEditText.getText().toString().equals(device.getAddress())) {
@@ -91,6 +99,7 @@ public class NetworkActivity extends AppCompatActivity {
                 Toast.makeText(this, "Device address found", Toast.LENGTH_SHORT).show();
                 for (String file: files) {
                     if (file.equals(memoName.getText().toString())) {
+                        counter3--;
                         ifNetwork.transfer(device, file);
                     }
                 }
@@ -99,16 +108,25 @@ public class NetworkActivity extends AppCompatActivity {
                 Toast.makeText(this, "Device name found", Toast.LENGTH_SHORT).show();
                 for (String file: files) {
                     if (file.contains(memoName.getText().toString())) {
+                        counter3--;
                         ifNetwork.transfer(device, file);
                     }
                 }
             } else {
                 counter1++;
                 counter2++;
+                counter3++;
             }
         }
         if (counter1 == counter2) {
-            Toast.makeText(this, "Could not be found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Device could not be found", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Device could be found", Toast.LENGTH_SHORT).show();
+        }
+        if (counter3 == counter2) {
+            Toast.makeText(this, "File could not be found", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "File could be found", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -129,22 +147,22 @@ public class NetworkActivity extends AppCompatActivity {
             } else {
                 pairedDevices = bluetoothAdapter.getBondedDevices();
                 serverAcceptThread = new ServerAcceptThread(bluetoothAdapter, this);
+                if (pairedDevices.size() > 0) {
+                    deviceTextView.setText("Paired devices:" + '\n');
+                    for (BluetoothDevice device: pairedDevices) {
+                        deviceTextView.append(device.getAddress() + " - " + device.getName() + '\n');
+                    }
+                }
+                serverAcceptThread.start();
             }
         }
 
         connectEditText = findViewById(R.id.macEditText);
         deviceTextView = findViewById(R.id.deviceTextView);
         memoName = findViewById(R.id.titleEditTextNetworkActivity);
-
-        if (pairedDevices.size() > 0) {
-            deviceTextView.setText("Paired devices:" + '\n');
-            for (BluetoothDevice device: pairedDevices) {
-                deviceTextView.append(device.getAddress() + " - " + device.getName() + '\n');
-            }
-        }
+        connectButton = findViewById(R.id.connectButton);
 
         ifNetwork = new ImplNetwork(this, deviceTextView, connectEditText, bluetoothAdapter);
-        serverAcceptThread.start();
     }
 
     @Override

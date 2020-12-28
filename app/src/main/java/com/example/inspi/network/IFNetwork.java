@@ -3,6 +3,7 @@ package com.example.inspi.network;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.widget.Button;
 
 import java.util.Set;
 
@@ -30,6 +31,7 @@ public interface IFNetwork {
     /**
      * Transfers files to the paired device.
      * @param pairedDevice needs the address of the other device to save it.
+     * @param title is the title of the file which we want wo send.
      */
     void transfer(BluetoothDevice pairedDevice, String title);
 

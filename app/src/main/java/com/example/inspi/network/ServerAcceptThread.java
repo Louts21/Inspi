@@ -5,26 +5,36 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.inspi.model.File;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
 public class ServerAcceptThread extends Thread {
-
+    /**
+     * Tag which will be shown if an error appears.
+     */
     private final static String TAG = "INSPI_DEBUG_TAG_SAT";
 
+    /**
+     * The socket of server.
+     */
     private final BluetoothServerSocket mmServerSocket;
 
+    /**
+     * The context of NetworkActivity.
+     */
     private final Context context;
 
+    /**
+     * Constructor of ServerAcceptThread (class)
+     * @param bluetoothAdapter is needed to create a socket.
+     * @param context will be needed in another method.
+     */
     public ServerAcceptThread(BluetoothAdapter bluetoothAdapter, Context context) {
         // Use a temporary object that is later assigned to mmServerSocket
         // because mmServerSocket is final.
@@ -39,6 +49,7 @@ public class ServerAcceptThread extends Thread {
         this.context = context;
     }
 
+    @Override
     public void run() {
         BluetoothSocket socket = null;
         // Keep listening until exception occurs or a socket is returned.
@@ -51,29 +62,21 @@ public class ServerAcceptThread extends Thread {
             // A connection was accepted. Perform work associated with
             // the connection in a separate thread.
             manageMyConnectedSocket(socket);
-            Toast.makeText(context, "Received new data", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * This method will accept of file data.
+     * @param socket is needed to get the I-Stream.
+     */
     private void manageMyConnectedSocket(BluetoothSocket socket) {
         DataInputStream dataInputStream;    //Filename and his input
-        DataOutputStream dataOutputStream;  //Callback that he is done
         try {
             dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            dataOutputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             String title = dataInputStream.readUTF();
             File file = new File(socket.getRemoteDevice().getAddress(), title);
-            byte[] bytes1 = new byte[4096];
-            int count1;
-            while ((count1 = dataInputStream.read(bytes1)) > 0) {
-                try (FileOutputStream fos = context.openFileOutput(file.getFileName(), Context.MODE_PRIVATE)) {
-                    fos.write(bytes1, 0, count1);
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                }
-            }
-            try {
-                dataOutputStream.writeUTF("Done");
+            try (FileOutputStream fos = context.openFileOutput(file.getFileName(), Context.MODE_PRIVATE)) {
+                fos.write(dataInputStream.readUTF().getBytes());
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -82,7 +85,9 @@ public class ServerAcceptThread extends Thread {
         }
     }
 
-    // Closes the connect socket and causes the thread to finish.
+    /**
+     * Closes the connect socket and causes the thread to finish.
+     */
     public void cancel() {
         try {
             mmServerSocket.close();
