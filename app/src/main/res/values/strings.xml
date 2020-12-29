@@ -25,9 +25,16 @@
     <string name="editText_memo">Please write a name and press Open</string>
     <string name="button_gallery_save">Save</string>
 
-    <string name="imageView_create_picture" />
+    <string name="imageView_create_picture"/>
     <string name="plainText_create_picture">Empty</string>
     <string name="button_save_create_picture">Save</string>
+    <string name="button_rec_create_picture">Rec</string>
 
     <string name="imageView_picture_gallery"/>
+    <string name="editText_picture_gallery">Empty</string>
+    <string name="button_open_picture_gallery">Open</string>
+    <string name="textView_picture_gallery">Type a picture name and press Open</string>
+    <string name="button_delete_picture_gallery">Delete</string>
+    <string name="button_save_picture_gallery">Save</string>
+    <string name="button_edit_picture_gallery">Edit</string>
 </resources>

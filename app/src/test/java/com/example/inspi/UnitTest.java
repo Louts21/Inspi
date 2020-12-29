@@ -26,9 +26,8 @@ public class UnitTest {
      */
     @Test
     public void pictureCreateTest() {
-        Picture picture = new Picture("Lorbeeren Weg 77", "Urlaub am Meer", 22, null);
+        Picture picture = new Picture("Lorbeeren Weg 77", "Urlaub am Meer",null);
         Assert.assertTrue(picture.getPictureName().contains("2020"));
         Assert.assertEquals("Urlaub am Meer", picture.getPictureTitle());
-        Assert.assertEquals(22, (int) picture.getPictureID());
     }
 }

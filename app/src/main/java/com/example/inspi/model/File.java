@@ -38,7 +38,7 @@ public class File implements IFModel {
     public File(String address, String title) {
         fileTitle = title;
         fileAddress = address;
-        fileName = currentTimeGetter() + " " + address + " " + title;
+        fileName = currentTimeGetter() + " " + address + " " + "File" + title;
     }
 
     @Override

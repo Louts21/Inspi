@@ -19,12 +19,7 @@ public class Picture implements IFModel {
     /**
      * Title of a picture.
      */
-    private String pictureTitle;
-
-    /**
-     * Id of each picture.
-     */
-    private final Integer pictureID;
+    private final String pictureTitle;
 
     /**
      * Bitmap of each picture.
@@ -44,11 +39,10 @@ public class Picture implements IFModel {
      * @param id a specific id for each picture.
      * @param bitmap is the bitmap of each picture.
      */
-    public Picture(String address, String title, int id, Bitmap bitmap) {
-        pictureID = id;
+    public Picture(String address, String title, Bitmap bitmap) {
         pictureTitle = title;
         pictureBitmap = bitmap;
-        pictureName = currentTimeGetter() + " " + address + " " + pictureTitle;
+        pictureName = currentTimeGetter() + " " + address + " " + "Pic" + pictureTitle;
     }
 
     @Override
@@ -71,14 +65,6 @@ public class Picture implements IFModel {
      */
     public String getPictureTitle() {
         return pictureTitle;
-    }
-
-    /**
-     * Getter of pictureID (Integer variable).
-     * @return returns an integer.
-     */
-    public Integer getPictureID() {
-        return pictureID;
     }
 
     /**

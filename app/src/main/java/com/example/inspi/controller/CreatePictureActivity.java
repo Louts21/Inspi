@@ -18,6 +18,10 @@ import android.widget.Toast;
 import com.example.inspi.R;
 import com.example.inspi.model.Picture;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class CreatePictureActivity extends AppCompatActivity {
 
     private static final String TAG = "INSPI_DEBUG_TAG_CPA";
@@ -28,7 +32,7 @@ public class CreatePictureActivity extends AppCompatActivity {
 
     private Bitmap bitmap;
 
-    private int counter = 0;
+    private byte[] byteArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +64,14 @@ public class CreatePictureActivity extends AppCompatActivity {
     }
 
     /**
-     * Generates an id for each picture.
-     * @return returns an integer.
+     * Will delete the picture.
+     * @param view needed to access it on the xml-file.
      */
-    public int idFactory() {
-        return counter++;
+    public void recycle(View view) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byteArray = baos.toByteArray();
+        bitmap.recycle();
     }
 
     /**
@@ -72,7 +79,14 @@ public class CreatePictureActivity extends AppCompatActivity {
      * @param view is needed to use it by onClick() of activity_create_picture.
      */
     public void save(View view) {
-        Picture picture = new Picture(getAddress(), pictureTitle.getText().toString(), idFactory(), bitmap);
+        Picture picture = new Picture(getAddress(), pictureTitle.getText().toString(), bitmap);
+        try (FileOutputStream fos = this.openFileOutput(picture.getPictureName(), MODE_PRIVATE)){
+            fos.write(byteArray);
+            fos.write(pictureTitle.getText().toString().getBytes());
+            fos.flush();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(CreatePictureActivity.this, PictureGalleryActivity.class);
         startActivity(intent);

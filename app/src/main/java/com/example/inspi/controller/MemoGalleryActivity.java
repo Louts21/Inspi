@@ -105,7 +105,7 @@ public class MemoGalleryActivity extends AppCompatActivity {
         int counter1 = 0;
         int counter2 = 0;
         for (String s: files) {
-            if (s.contains(memoEditText1.getText())) {
+            if (s.contains("File" + memoEditText1.getText())) {
                 counter1--;
                 Toast.makeText(MemoGalleryActivity.this, "Could be found", Toast.LENGTH_SHORT).show();
                 FileInputStream fileInputStream = context.openFileInput(s);
