@@ -50,6 +50,9 @@ public class NetworkActivity extends AppCompatActivity {
      */
     private TextView deviceTextView;
 
+    /**
+     * The button will be needed to dis- and enable it.
+     */
     private Button connectButton;
 
     /**
@@ -88,7 +91,6 @@ public class NetworkActivity extends AppCompatActivity {
      * @param view is needed for toClick().
      */
     public void openConnect(View view) {
-        connectButton.setEnabled(false);
         int counter1 = 0;
         int counter2 = 0;
         int counter3 = 0;
@@ -145,6 +147,7 @@ public class NetworkActivity extends AppCompatActivity {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             } else {
+                deviceTextView = findViewById(R.id.deviceTextView);
                 pairedDevices = bluetoothAdapter.getBondedDevices();
                 serverAcceptThread = new ServerAcceptThread(bluetoothAdapter, this);
                 if (pairedDevices.size() > 0) {
@@ -158,7 +161,6 @@ public class NetworkActivity extends AppCompatActivity {
         }
 
         connectEditText = findViewById(R.id.macEditText);
-        deviceTextView = findViewById(R.id.deviceTextView);
         memoName = findViewById(R.id.titleEditTextNetworkActivity);
         connectButton = findViewById(R.id.connectButton);
 

@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imageViewCreatePicture"
-        android:layout_width="342dp"
-        android:layout_height="557dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
@@ -17,8 +17,10 @@
         android:contentDescription="@string/imageView_create_picture"
         app:layout_constraintBottom_toTopOf="@+id/editTextCreatePicture"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.457"
         app:srcCompat="@drawable/ic_launcher_foreground" />
 
     <EditText

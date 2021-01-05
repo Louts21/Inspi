@@ -3,9 +3,6 @@ package com.example.inspi.network;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.widget.Button;
-
-import java.util.Set;
 
 /**
  * This is the interface of all classes which quest it is to send data over a connection.

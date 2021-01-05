@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -16,9 +17,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.inspi.R;
+import com.example.inspi.model.File;
 import com.example.inspi.model.Picture;
 
-import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -31,8 +33,6 @@ public class CreatePictureActivity extends AppCompatActivity {
     private EditText pictureTitle;
 
     private Bitmap bitmap;
-
-    private byte[] byteArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,7 @@ public class CreatePictureActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "Extra was empty");
         }
+
         picture.setImageBitmap(bitmap);
     }
 
@@ -68,27 +69,64 @@ public class CreatePictureActivity extends AppCompatActivity {
      * @param view needed to access it on the xml-file.
      */
     public void recycle(View view) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byteArray = baos.toByteArray();
         bitmap.recycle();
+        onBackPressed();
     }
 
     /**
-     * Saves the picture publicly.
+     * Saves the picture privately.
+     * data/data/YOUR_APP_PACKAGE/files/Inspi/Images/image.jpeg
      * @param view is needed to use it by onClick() of activity_create_picture.
      */
     public void save(View view) {
-        Picture picture = new Picture(getAddress(), pictureTitle.getText().toString(), bitmap);
-        try (FileOutputStream fos = this.openFileOutput(picture.getPictureName(), MODE_PRIVATE)){
-            fos.write(byteArray);
-            fos.write(pictureTitle.getText().toString().getBytes());
+        java.io.File pictureFile = getOutputMediaFile();
+
+        if (pictureFile == null) {
+            Log.d(TAG,"Error creating media file, check storage permissions: ");
+            return;
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, fos);
             fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+        }
+
+        Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
+        /*
+        Intent intent = new Intent(CreatePictureActivity.this, PictureGalleryActivity.class);
+        startActivity(intent);
+         */
+    }
+
+    /**
+     * Creates a media file and returns it.
+     * @return returns a file object.
+     */
+    private java.io.File getOutputMediaFile() {
+        java.io.File mediaStorageDir = new java.io.File(Environment.getExternalStorageDirectory() + "/Android/data/" + getApplicationContext().getPackageName() + "/Files");
+
+        if (! mediaStorageDir.exists()) {
+            if (! mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+
+        Picture picture = new Picture(getAddress(), pictureTitle.getText().toString(), bitmap);
+        try (FileOutputStream fos = this.openFileOutput(picture.getPictureName(), Context.MODE_PRIVATE)) {
+            fos.write(picture.getPictureTitle().getBytes());
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(CreatePictureActivity.this, PictureGalleryActivity.class);
-        startActivity(intent);
+
+        java.io.File mediaFile;
+        String mImageName = picture.getPictureTitle() +".jpg";
+        mediaFile = new java.io.File(mediaStorageDir.getPath() + java.io.File.separator + mImageName);
+        return mediaFile;
     }
 }

@@ -2,6 +2,7 @@ package com.example.inspi.model;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.os.Environment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,7 +37,6 @@ public class Picture implements IFModel {
      * Allows creating objects of Picture (class).
      * @param address the MAC-Address of our device.
      * @param title a title related to the picture.
-     * @param id a specific id for each picture.
      * @param bitmap is the bitmap of each picture.
      */
     public Picture(String address, String title, Bitmap bitmap) {

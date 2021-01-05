@@ -16,7 +16,7 @@ public class UnitTest {
     @Test
     public void memoCreateTest() {
         File file = new File("Lorbeeren Weg 77", "Mein Weg nach Rom.");
-        Assert.assertTrue(file.getFileName().contains("2020"));
+        Assert.assertTrue(file.getFileName().contains("2021"));
         Assert.assertTrue(file.getFileAddress().contains("Lorbeeren Weg 77"));
         Assert.assertTrue(file.getFileTitle().contains("Mein Weg nach Rom."));
     }
@@ -26,8 +26,8 @@ public class UnitTest {
      */
     @Test
     public void pictureCreateTest() {
-        Picture picture = new Picture("Lorbeeren Weg 77", "Urlaub am Meer",null);
-        Assert.assertTrue(picture.getPictureName().contains("2020"));
+        Picture picture = new Picture("Lorbeeren Weg 77", "Urlaub am Meer", null);
+        Assert.assertTrue(picture.getPictureName().contains("2021"));
         Assert.assertEquals("Urlaub am Meer", picture.getPictureTitle());
     }
 }

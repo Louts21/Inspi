@@ -4,7 +4,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.inspi.model.File;
 
@@ -79,10 +82,27 @@ public class ServerAcceptThread extends Thread {
                 fos.write(dataInputStream.readUTF().getBytes());
             } catch (IOException ioe) {
                 ioe.printStackTrace();
+            } finally {
+                Log.i(TAG, "Data received");
+                toastAnywhere();
+                cancel();
             }
         } catch (IOException ioe) {
             Log.e(TAG, "Cant get IStream as Server in manageMyConnectedSocket", ioe);
         }
+    }
+
+    /**
+     * Creates a toast which can be shown in the main thread.
+     */
+    public void toastAnywhere() {
+        Handler toastHandler = new Handler(Looper.getMainLooper());
+        toastHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, "Data received", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**

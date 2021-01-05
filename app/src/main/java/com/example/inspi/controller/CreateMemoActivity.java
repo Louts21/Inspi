@@ -63,33 +63,7 @@ public class CreateMemoActivity extends AppCompatActivity {
         memoTitleField = findViewById(R.id.memoTitle);
         context = getApplicationContext();
         NUM_BYTES_NEEDED_FOR_MY_APP = 1024 * 1024 * 10L;
-        /*
-        try {
-            space();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-         */
     }
-
-    /**
-     * This method says the device how much space (MB) we need and claims it for us.
-     * @throws IOException might throw an IOException.
-     */
-    /*
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void space() throws IOException {
-        StorageManager storageManager = getApplicationContext().getSystemService(StorageManager.class);
-        UUID appSpecificInternalDirUuid = storageManager.getUuidForPath(getFilesDir());
-        long availableBytes = storageManager.getAllocatableBytes(appSpecificInternalDirUuid);
-        if (availableBytes >= NUM_BYTES_NEEDED_FOR_MY_APP) {
-            storageManager.allocateBytes(appSpecificInternalDirUuid, NUM_BYTES_NEEDED_FOR_MY_APP);
-        } else {
-            Intent storageIntent = new Intent();
-            storageIntent.setAction(ACTION_MANAGE_STORAGE);
-        }
-    }
-     */
 
     /**
      * Let us get the MAC-Address of our device.

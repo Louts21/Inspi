@@ -1,6 +1,7 @@
 package com.example.inspi;
 
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -18,6 +19,7 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
@@ -35,7 +37,7 @@ public class EspressoTest {
      * Checks if the connectionButton works.
      */
     @Test
-    public void mainNetworkButton() {
+    public void mainNetwork() {
         Espresso.onView(withId(R.id.connectionButton)).perform(click());
 
         Espresso.onView(withId(R.id.scanButton)).check(matches(withText("Scan for devices")));
@@ -109,5 +111,60 @@ public class EspressoTest {
     @Test
     public void mainPictureGallery() {
         Espresso.onView(withId(R.id.pictureGalleryButton)).perform(click());
+    }
+
+    /**
+     * This method will test everything in my application which is testable.
+     */
+    @Test
+    public void E2ETest() {
+        // Creating a memo
+        Espresso.onView(withId(R.id.memoBotton)).perform(click());
+
+        Espresso.onView(withId(R.id.memoTitle)).check(matches(withText("Empty")));
+        Espresso.onView(withId(R.id.memoTextField)).check(matches(withText("Empty")));
+        Espresso.onView(withId(R.id.memoTextField)).perform(clearText());
+        Espresso.onView(withId(R.id.memoTitle)).perform(clearText());
+        Espresso.onView(withId(R.id.saveButton)).check(matches(withText("Save")));
+        Espresso.onView(withId(R.id.memoTitle)).perform(typeText("Empire Awaris"));
+
+        Espresso.onView(withId(R.id.memoTitle)).check(matches(withText("Empire Awaris")));
+        Espresso.onView(withId(R.id.memoTextField)).perform(replaceText("Empire Awaris was founded..."));
+
+        Espresso.onView(withId(R.id.memoTextField)).check(matches(withText("Empire Awaris was founded...")));
+        Espresso.onView(withId(R.id.saveButton)).perform(click());
+
+        Espresso.onView(isRoot()).perform(ViewActions.pressBack());
+        Espresso.onView(isRoot()).perform(ViewActions.pressBack());
+        // Find that memo
+        Espresso.onView(withId(R.id.memoGalleryButton)).perform(click());
+
+        Espresso.onView(withId(R.id.memoSearch)).check(matches(withText("Empty")));
+        Espresso.onView(withId(R.id.button_open)).check(matches(withText("Open")));
+        Espresso.onView(withId(R.id.memoSearchResult)).check(matches(withText("Please write a name and press Open.")));
+
+        Espresso.onView(withId(R.id.memoSearch)).perform(clearText());
+        Espresso.onView(withId(R.id.memoSearch)).perform(typeText("Empire Awaris"));
+        Espresso.onView(withId(R.id.button_open)).perform(click());
+
+        Espresso.onView(withId(R.id.editButton)).check(matches(withText("Edit")));
+        Espresso.onView(withId(R.id.cancelButton)).check(matches(withText("Delete")));
+        Espresso.onView(withId(R.id.editButton)).perform(click());
+
+        Espresso.onView(withId(R.id.saveGalleryButton)).check(matches(withText("Save")));
+        Espresso.onView(withId(R.id.editTextMemoGallery)).perform(replaceText("Empire Awaris was founded?"));
+        Espresso.onView(withId(R.id.saveGalleryButton)).perform(click());
+
+        Espresso.onView(withId(R.id.button_open)).perform(click());
+        Espresso.onView(withId(R.id.cancelButton)).perform(click());
+
+        Espresso.onView(isRoot()).perform(ViewActions.pressBack());
+        Espresso.onView(isRoot()).perform(ViewActions.pressBack());
+        // Use Bluetooth
+        Espresso.onView(withId(R.id.connectionButton)).perform(click());
+
+        Espresso.onView(withId(R.id.scanButton)).check(matches(withText("Scan for devices")));
+        Espresso.onView(withId(R.id.discoverableButton)).check(matches(withText("Activate discoverability")));
+        Espresso.onView(withId(R.id.connectButton)).check(matches(withText("Connect")));
     }
 }

@@ -8,6 +8,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -214,7 +216,7 @@ public class ImplNetwork implements IFNetwork {
                 try {
                     bluetoothSocket.close();
                 } catch (IOException closeException) {
-                    Log.e(TAG2, "Could not close the client socket", closeException);
+                    Log.i(TAG2, "Could not close the client socket", closeException);
                 }
                 return;
             }
@@ -246,12 +248,27 @@ public class ImplNetwork implements IFNetwork {
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                 } finally {
+                    Log.i(TAG2, "Data send");
+                    toastAnywhere();
                     dataOutputStream.writeUTF(stringBuilder.toString());
                     dataOutputStream.flush();
                 }
             } catch (Exception e) {
                 Log.e(TAG2, "Cant get OStream as Client in manageMyConnectedSocket", e);
             }
+        }
+
+        /**
+         * Creates a toast which can be shown in the main thread.
+         */
+        public void toastAnywhere() {
+            Handler toastHandler = new Handler(Looper.getMainLooper());
+            toastHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "Data send", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         /**
