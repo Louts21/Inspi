@@ -4,12 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,29 +34,70 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * This activity shows, deletes or saves a new title of a picture.
+ * @author Kevin Jagielski
+ */
 public class PictureGalleryActivity extends AppCompatActivity {
-
+    /**
+     * A tag which will be shown if a Log appears with important information.
+     */
     private static final String TAG = "INSPI_DEBUG_TAG_PGA";
 
+    /**
+     * Button of R.id.saveButtonPictureGallery.
+     */
     private Button saveButton;
 
+    /**
+     * Button of R.id.editButtonPictureGallery.
+     */
     private Button editButton;
 
+    /**
+     * Button of R.id.deleteButtonPictureGallery.
+     */
     private Button deleteButton;
 
+    /**
+     * Button of R.id.openButtonPictureGallery.
+     */
     private Button openButton;
 
+    /**
+     * TextView of R.id.textViewPictureTitlePictureGallery.
+     */
     private TextView seePictureTitle;
 
+    /**
+     * TextView of R.id.textViewPictureGallery.
+     */
     private TextView createdPictures;
 
+    /**
+     * ImageView of R.id.imageViewPictureGallery.
+     */
     private ImageView imageView;
 
+    /**
+     * EditText of R.id.editTextTextPersonName.
+     */
     private EditText renameEditText;
 
+    /**
+     * Bitmap which will be shown in imageView (object).
+     */
     private Bitmap bitmap;
 
-    private String fileName;
+    /**
+     * A string of letters which is needed to remember which file we use right now.
+     */
+    private String fileTitle;
+
+    /**
+     * A string of letters which present the current path we use to get a picture.
+     */
+    private String fileDirectory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,18 +117,12 @@ public class PictureGalleryActivity extends AppCompatActivity {
         imageView.setVisibility(View.INVISIBLE);
         seePictureTitle = findViewById(R.id.textViewPictureTitlePictureGallery);
         seePictureTitle.setVisibility(View.INVISIBLE);
-        renameEditText = findViewById(R.id.editTextPictureGallery);
+        renameEditText = findViewById(R.id.editTextTextPersonName);
         renameEditText.setVisibility(View.INVISIBLE);
         renameEditText.setEnabled(false);
         openButton = findViewById(R.id.openButtonPictureGallery);
 
-        createdPictures = findViewById(R.id.textViewPictureGallery);
-        String[] files = this.fileList();
-        for (String pictureTitle : files) {
-            if (pictureTitle.contains("Pic")) {
-                createdPictures.setText(showInput(pictureTitle));
-            }
-        }
+        setCreatedPictures();
     }
 
     /**
@@ -114,8 +154,10 @@ public class PictureGalleryActivity extends AppCompatActivity {
             imageView.setVisibility(View.INVISIBLE);
             seePictureTitle.setVisibility(View.INVISIBLE);
         } else {
+            fileDirectory = Environment.getExternalStorageDirectory() + "/Android/data/" + getApplicationContext().getPackageName() + "/Files" + File.separator + userInput.getText().toString() + ".jpg";
+            bitmap = BitmapFactory.decodeFile(fileDirectory);
+
             Toast.makeText(this, "Picture found", Toast.LENGTH_SHORT).show();
-            bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/Android/data/" + getApplicationContext().getPackageName() + "/Files" + File.separator + userInput.getText().toString() + ".jpg");
             imageView.setImageBitmap(bitmap);
             saveButton.setVisibility(View.INVISIBLE);
             saveButton.setEnabled(false);
@@ -143,8 +185,50 @@ public class PictureGalleryActivity extends AppCompatActivity {
         saveButton.setEnabled(true);
     }
 
+    /**
+     * Deletes the shown picture and his reference in context.
+     * @param view is needed use it through onClick() in the XML-File.
+     */
     public void deletePictureAndTitle(View view) {
+        int counter1 = 0;
+        int counter2 = 0;
 
+        java.io.File fileDelete = new java.io.File(fileDirectory);
+        if (fileDelete.exists()) {
+            if (fileDelete.delete()) {
+                counter1++;
+                counter2++;
+                Log.e(TAG, "File deleted :" + fileDirectory);
+                callBroadCast();
+            } else {
+                counter1--;
+                Log.e(TAG, "File not deleted :" + fileDirectory);
+            }
+        }
+
+        if (this.deleteFile(fileTitle)) {
+            counter1++;
+            counter2++;
+            Log.i(TAG, "File deleted at saveChanges()");
+        } else {
+            counter1--;
+            Log.i(TAG, "Could not delete old file at saveChanges()");
+        }
+
+        if (counter1 == counter2) {
+            Toast.makeText(this, "Picture deleted", Toast.LENGTH_SHORT).show();
+            openButton.setVisibility(View.VISIBLE);
+            openButton.setEnabled(true);
+            createdPictures.setVisibility(View.INVISIBLE);
+            createdPictures.setEnabled(false);
+            imageView.setVisibility(View.INVISIBLE);
+            seePictureTitle.setVisibility(View.INVISIBLE);
+            deleteButton.setVisibility(View.INVISIBLE);
+            deleteButton.setEnabled(false);
+            setCreatedPictures();
+        } else {
+            Toast.makeText(this, "Picture could not be deleted", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -157,21 +241,28 @@ public class PictureGalleryActivity extends AppCompatActivity {
         seePictureTitle.setVisibility(View.VISIBLE);
         seePictureTitle.setEnabled(true);
 
-        this.deleteFile(fileName);
+        if (this.deleteFile(fileTitle)) {
+            Log.i(TAG, "Old file deleted at saveChanges()");
+        } else {
+            Log.i(TAG, "Could not delete old file at saveChanges()");
+        }
 
         Picture picture = new Picture(getAddress(), renameEditText.getText().toString(), bitmap);
         try (FileOutputStream fos = this.openFileOutput(picture.getPictureName(), Context.MODE_PRIVATE)) {
-            fos.write(renameEditText.getText().toString().getBytes());
+            fos.write(picture.getPictureTitle().getBytes());
             Toast.makeText(PictureGalleryActivity.this, "Saved", Toast.LENGTH_SHORT).show();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } finally {
             openButton.setVisibility(View.VISIBLE);
             openButton.setEnabled(true);
-            createdPictures.setVisibility(View.VISIBLE);
-            createdPictures.setEnabled(true);
+            createdPictures.setVisibility(View.INVISIBLE);
+            createdPictures.setEnabled(false);
             imageView.setVisibility(View.INVISIBLE);
             seePictureTitle.setVisibility(View.INVISIBLE);
+            deleteButton.setVisibility(View.INVISIBLE);
+            deleteButton.setEnabled(false);
+            setCreatedPictures();
         }
     }
 
@@ -183,6 +274,7 @@ public class PictureGalleryActivity extends AppCompatActivity {
      */
     private String showInput(String pictureTitle) {
         FileInputStream fis = null;
+        fileTitle = pictureTitle;
         try {
             fis = this.openFileInput(pictureTitle);
         } catch (FileNotFoundException e) {
@@ -199,8 +291,21 @@ public class PictureGalleryActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        fileName = stringBuilder.toString();
         return stringBuilder.toString();
+    }
+
+    /**
+     * Shows all pictureTitles the user had created.
+     */
+    private void setCreatedPictures() {
+        createdPictures = findViewById(R.id.textViewPictureGallery);
+        String[] files = this.fileList();
+        createdPictures.setText(null);
+        for (String pictureTitle : files) {
+            if (pictureTitle.contains("Pic")) {
+                createdPictures.append(showInput(pictureTitle) + '\n');
+            }
+        }
     }
 
     /**
@@ -212,5 +317,24 @@ public class PictureGalleryActivity extends AppCompatActivity {
         WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
         return info.getMacAddress();
+    }
+
+    /**
+     * Informative method which shows what he exactly deleted and where.
+     */
+    private void callBroadCast() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            Log.e(TAG, " >= 23");
+            MediaScannerConnection.scanFile(this, new String[]{Environment.getExternalStorageDirectory().toString()}, null, new MediaScannerConnection.OnScanCompletedListener() {
+                @Override
+                public void onScanCompleted(String path, Uri uri) {
+                    Log.e("ExternalStorage", "Scanned " + path + ":");
+                    Log.e("ExternalStorage", "-> uri=" + uri);
+                }
+            });
+        } else {
+            Log.e("-->", " < 23");
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+        }
     }
 }

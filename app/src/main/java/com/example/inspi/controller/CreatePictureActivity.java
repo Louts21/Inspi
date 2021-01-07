@@ -1,10 +1,13 @@
 package com.example.inspi.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -17,21 +20,35 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.inspi.R;
-import com.example.inspi.model.File;
 import com.example.inspi.model.Picture;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * This activity saves the given picture in a directory and saves a pictureTitle into context.
+ */
 public class CreatePictureActivity extends AppCompatActivity {
-
+    /**
+     * A tag which will be used by Log's.
+     * It groups the Log's to a tag and makes it easier for me to find out where the log came form.
+     */
     private static final String TAG = "INSPI_DEBUG_TAG_CPA";
 
+    /**
+     * ImageView of R.id.imageViewCreatePicture.
+     */
     private ImageView picture;
 
+    /**
+     * EditText of R.id.editTextCreatePicture.
+     */
     private EditText pictureTitle;
 
+    /**
+     * This bitmap is created of the camera of the android phone.
+     */
     private Bitmap bitmap;
 
     @Override
@@ -79,6 +96,10 @@ public class CreatePictureActivity extends AppCompatActivity {
      * @param view is needed to use it by onClick() of activity_create_picture.
      */
     public void save(View view) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        }
+
         java.io.File pictureFile = getOutputMediaFile();
 
         if (pictureFile == null) {
@@ -98,10 +119,6 @@ public class CreatePictureActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
-        /*
-        Intent intent = new Intent(CreatePictureActivity.this, PictureGalleryActivity.class);
-        startActivity(intent);
-         */
     }
 
     /**
@@ -113,8 +130,11 @@ public class CreatePictureActivity extends AppCompatActivity {
 
         if (! mediaStorageDir.exists()) {
             if (! mediaStorageDir.mkdirs()) {
+                Log.i(TAG, "Directory not created");
                 return null;
             }
+        } else {
+            Log.i(TAG, "Directory exists");
         }
 
         Picture picture = new Picture(getAddress(), pictureTitle.getText().toString(), bitmap);

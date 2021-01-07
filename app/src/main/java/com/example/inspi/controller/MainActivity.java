@@ -31,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    private String currentPhotoPath;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

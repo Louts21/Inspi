@@ -14,8 +14,8 @@
     <string name="button_discoverability">Activate discoverability</string>
     <string name="textView_devices">Please press Discover</string>
     <string name="button_connect">Connect</string>
-    <string name="editText_mac">Empty</string>
-    <string name="editText_title">Empty</string>
+    <string name="editText_mac">MAC-Address</string>
+    <string name="editText_title">File title</string>
 
     <string name="text_memo_name">Empty</string>
     <string name="button_open">Open</string>
