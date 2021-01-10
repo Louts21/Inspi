@@ -6,6 +6,7 @@ import android.content.Context;
 
 /**
  * This is the interface of all classes which quest it is to send data over a connection.
+ * @author Kevin Jagielski
  */
 public interface IFNetwork {
     /**

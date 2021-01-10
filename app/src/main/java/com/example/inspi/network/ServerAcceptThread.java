@@ -17,6 +17,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
+/**
+ * Server site of my bluetooth service.
+ * It will get data of a client and saves the data.
+ * @author Kevin Jagielski
+ */
 public class ServerAcceptThread extends Thread {
     /**
      * Tag which will be shown if an error appears.

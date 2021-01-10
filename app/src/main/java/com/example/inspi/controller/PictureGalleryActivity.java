@@ -45,16 +45,6 @@ public class PictureGalleryActivity extends AppCompatActivity {
     private static final String TAG = "INSPI_DEBUG_TAG_PGA";
 
     /**
-     * Button of R.id.saveButtonPictureGallery.
-     */
-    private Button saveButton;
-
-    /**
-     * Button of R.id.editButtonPictureGallery.
-     */
-    private Button editButton;
-
-    /**
      * Button of R.id.deleteButtonPictureGallery.
      */
     private Button deleteButton;
@@ -65,11 +55,6 @@ public class PictureGalleryActivity extends AppCompatActivity {
     private Button openButton;
 
     /**
-     * TextView of R.id.textViewPictureTitlePictureGallery.
-     */
-    private TextView seePictureTitle;
-
-    /**
      * TextView of R.id.textViewPictureGallery.
      */
     private TextView createdPictures;
@@ -78,11 +63,6 @@ public class PictureGalleryActivity extends AppCompatActivity {
      * ImageView of R.id.imageViewPictureGallery.
      */
     private ImageView imageView;
-
-    /**
-     * EditText of R.id.editTextTextPersonName.
-     */
-    private EditText renameEditText;
 
     /**
      * Bitmap which will be shown in imageView (object).
@@ -104,22 +84,11 @@ public class PictureGalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture_gallery);
 
-        saveButton = findViewById(R.id.saveButtonPictureGallery);
-        saveButton.setEnabled(false);
-        saveButton.setVisibility(View.INVISIBLE);
-        editButton = findViewById(R.id.editButtonPictureGallery);
-        editButton.setEnabled(false);
-        editButton.setVisibility(View.INVISIBLE);
         deleteButton = findViewById(R.id.deleteButtonPictureGallery);
         deleteButton.setEnabled(false);
         deleteButton.setVisibility(View.INVISIBLE);
         imageView = findViewById(R.id.imageViewPictureGallery);
         imageView.setVisibility(View.INVISIBLE);
-        seePictureTitle = findViewById(R.id.textViewPictureTitlePictureGallery);
-        seePictureTitle.setVisibility(View.INVISIBLE);
-        renameEditText = findViewById(R.id.editTextTextPersonName);
-        renameEditText.setVisibility(View.INVISIBLE);
-        renameEditText.setEnabled(false);
         openButton = findViewById(R.id.openButtonPictureGallery);
 
         setCreatedPictures();
@@ -130,9 +99,6 @@ public class PictureGalleryActivity extends AppCompatActivity {
      * @param view is needed to use onClick() in the XML-File.
      */
     public void openPicture(View view) {
-        createdPictures.setVisibility(View.INVISIBLE);
-        imageView.setVisibility(View.VISIBLE);
-        seePictureTitle.setVisibility(View.VISIBLE);
         EditText userInput = findViewById(R.id.editTextPictureGallery);
 
         int counter1 = 0;
@@ -141,7 +107,6 @@ public class PictureGalleryActivity extends AppCompatActivity {
         for (String pictureTitle : files) {
             if (pictureTitle.contains(userInput.getText().toString())) {
                 counter1--;
-                seePictureTitle.setText(showInput(pictureTitle));
             } else {
                 counter1++;
                 counter2++;
@@ -152,37 +117,22 @@ public class PictureGalleryActivity extends AppCompatActivity {
             Toast.makeText(this, "Picture could not be found", Toast.LENGTH_SHORT).show();
             createdPictures.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.INVISIBLE);
-            seePictureTitle.setVisibility(View.INVISIBLE);
         } else {
             fileDirectory = Environment.getExternalStorageDirectory() + "/Android/data/" + getApplicationContext().getPackageName() + "/Files" + File.separator + userInput.getText().toString() + ".jpg";
             bitmap = BitmapFactory.decodeFile(fileDirectory);
 
-            Toast.makeText(this, "Picture found", Toast.LENGTH_SHORT).show();
-            imageView.setImageBitmap(bitmap);
-            saveButton.setVisibility(View.INVISIBLE);
-            saveButton.setEnabled(false);
-            editButton.setVisibility(View.VISIBLE);
-            editButton.setEnabled(true);
-            deleteButton.setVisibility(View.VISIBLE);
-            deleteButton.setEnabled(true);
-            openButton.setVisibility(View.INVISIBLE);
-            openButton.setEnabled(false);
+            if (bitmap == null) {
+                Toast.makeText(this, "Picture could not be found", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Picture found", Toast.LENGTH_SHORT).show();
+                imageView.setImageBitmap(bitmap);
+                createdPictures.setVisibility(View.INVISIBLE);
+                imageView.setVisibility(View.VISIBLE);
+                deleteButton.setVisibility(View.VISIBLE);
+                deleteButton.setEnabled(true);
+                openButton.setEnabled(false);
+            }
         }
-    }
-
-    /**
-     * Changes the visibility and dis- or enables some objects.
-     * @param view is needed to use onClick() in the XML-File.
-     */
-    public void editPictureTitle(View view) {
-        editButton.setVisibility(View.INVISIBLE);
-        editButton.setEnabled(false);
-        renameEditText.setVisibility(View.VISIBLE);
-        renameEditText.setEnabled(true);
-        seePictureTitle.setVisibility(View.INVISIBLE);
-        seePictureTitle.setEnabled(false);
-        saveButton.setVisibility(View.VISIBLE);
-        saveButton.setEnabled(true);
     }
 
     /**
@@ -222,47 +172,11 @@ public class PictureGalleryActivity extends AppCompatActivity {
             createdPictures.setVisibility(View.INVISIBLE);
             createdPictures.setEnabled(false);
             imageView.setVisibility(View.INVISIBLE);
-            seePictureTitle.setVisibility(View.INVISIBLE);
             deleteButton.setVisibility(View.INVISIBLE);
             deleteButton.setEnabled(false);
             setCreatedPictures();
         } else {
             Toast.makeText(this, "Picture could not be deleted", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * Saves the new title of the given picture.
-     * @param view is needed to use onClick() in the XML-File.
-     */
-    public void saveChanges(View view) {
-        saveButton.setVisibility(View.INVISIBLE);
-        saveButton.setEnabled(false);
-        seePictureTitle.setVisibility(View.VISIBLE);
-        seePictureTitle.setEnabled(true);
-
-        if (this.deleteFile(fileTitle)) {
-            Log.i(TAG, "Old file deleted at saveChanges()");
-        } else {
-            Log.i(TAG, "Could not delete old file at saveChanges()");
-        }
-
-        Picture picture = new Picture(getAddress(), renameEditText.getText().toString(), bitmap);
-        try (FileOutputStream fos = this.openFileOutput(picture.getPictureName(), Context.MODE_PRIVATE)) {
-            fos.write(picture.getPictureTitle().getBytes());
-            Toast.makeText(PictureGalleryActivity.this, "Saved", Toast.LENGTH_SHORT).show();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } finally {
-            openButton.setVisibility(View.VISIBLE);
-            openButton.setEnabled(true);
-            createdPictures.setVisibility(View.INVISIBLE);
-            createdPictures.setEnabled(false);
-            imageView.setVisibility(View.INVISIBLE);
-            seePictureTitle.setVisibility(View.INVISIBLE);
-            deleteButton.setVisibility(View.INVISIBLE);
-            deleteButton.setEnabled(false);
-            setCreatedPictures();
         }
     }
 
@@ -306,17 +220,6 @@ public class PictureGalleryActivity extends AppCompatActivity {
                 createdPictures.append(showInput(pictureTitle) + '\n');
             }
         }
-    }
-
-    /**
-     * Let us get the MAC-Address of our device.
-     * @return returns a String of the MAC-Address.
-     */
-    @SuppressLint("HardwareIds")
-    public String getAddress() {
-        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = manager.getConnectionInfo();
-        return info.getMacAddress();
     }
 
     /**

@@ -22,6 +22,7 @@ import java.util.Set;
 
 /**
  * This is the class which allows the user to view other devices and being discoverable.
+ * @author Kevin Jagielski
  */
 public class NetworkActivity extends AppCompatActivity {
     /**
@@ -49,11 +50,6 @@ public class NetworkActivity extends AppCompatActivity {
      * the one on the view object of activity_network.
      */
     private TextView deviceTextView;
-
-    /**
-     * The button will be needed to dis- and enable it.
-     */
-    private Button connectButton;
 
     /**
      * The name of the memo which will be send to another device.
@@ -162,7 +158,6 @@ public class NetworkActivity extends AppCompatActivity {
 
         connectEditText = findViewById(R.id.macEditText);
         memoName = findViewById(R.id.titleEditTextNetworkActivity);
-        connectButton = findViewById(R.id.connectButton);
 
         ifNetwork = new ImplNetwork(this, deviceTextView, connectEditText, bluetoothAdapter);
     }

@@ -8,6 +8,7 @@ import java.util.Date;
 
 /**
  * Model class which saves the file name and the date of his creation.
+ * @author Kevin Jagielski
  */
 public class File implements IFModel {
     /**

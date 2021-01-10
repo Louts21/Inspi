@@ -28,6 +28,7 @@ import java.io.IOException;
 
 /**
  * This activity saves the given picture in a directory and saves a pictureTitle into context.
+ * @author Kevin Jagielski
  */
 public class CreatePictureActivity extends AppCompatActivity {
     /**

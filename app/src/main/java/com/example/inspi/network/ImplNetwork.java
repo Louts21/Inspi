@@ -40,6 +40,7 @@ import static android.bluetooth.BluetoothDevice.ACTION_FOUND;
 /**
  * Implementation of IFNetwork (Interface).
  * This class manages everything about connection, bluetooth and data transfer.
+ * @author Kevin Jagielski
  */
 public class ImplNetwork implements IFNetwork {
     /**

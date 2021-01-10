@@ -24,6 +24,7 @@ import java.util.Date;
 /**
  * This is the main class/activity.
  * Here starts the user of my application.
+ * @author Kevin Jagielski
  */
 public class MainActivity extends AppCompatActivity {
     /**

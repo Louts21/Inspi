@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * This class shows all memos the user has created.
+ * @author Kevin Jagielski
  */
 public class MemoGalleryActivity extends AppCompatActivity {
     /**

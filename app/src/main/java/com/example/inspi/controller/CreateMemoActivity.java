@@ -29,6 +29,7 @@ import static android.os.storage.StorageManager.ACTION_MANAGE_STORAGE;
 
 /**
  * This class allows the user to create memos.
+ * @author Kevin Jagielski
  */
 public class CreateMemoActivity extends AppCompatActivity {
     /**

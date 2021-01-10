@@ -2,7 +2,6 @@ package com.example.inspi.model;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.os.Environment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -10,6 +9,7 @@ import java.util.Date;
 
 /**
  * This class is for the model picture.
+ * @author Kevin Jagielski
  */
 public class Picture implements IFModel {
     /**
