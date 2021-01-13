@@ -55,6 +55,11 @@ public class PictureGalleryActivity extends AppCompatActivity {
     private Button openButton;
 
     /**
+     * Button of R.id.cancelButtonPictureGallery.
+     */
+    private Button cancelButton;
+
+    /**
      * TextView of R.id.textViewPictureGallery.
      */
     private TextView createdPictures;
@@ -87,9 +92,15 @@ public class PictureGalleryActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButtonPictureGallery);
         deleteButton.setEnabled(false);
         deleteButton.setVisibility(View.INVISIBLE);
+
         imageView = findViewById(R.id.imageViewPictureGallery);
         imageView.setVisibility(View.INVISIBLE);
+
         openButton = findViewById(R.id.openButtonPictureGallery);
+
+        cancelButton = findViewById(R.id.cancelButtonPictureGallery);
+        cancelButton.setVisibility(View.INVISIBLE);
+        cancelButton.setEnabled(false);
 
         setCreatedPictures();
     }
@@ -130,7 +141,11 @@ public class PictureGalleryActivity extends AppCompatActivity {
                 imageView.setVisibility(View.VISIBLE);
                 deleteButton.setVisibility(View.VISIBLE);
                 deleteButton.setEnabled(true);
+
+                openButton.setVisibility(View.INVISIBLE);
                 openButton.setEnabled(false);
+                cancelButton.setVisibility(View.VISIBLE);
+                cancelButton.setEnabled(true);
             }
         }
     }
@@ -169,15 +184,38 @@ public class PictureGalleryActivity extends AppCompatActivity {
             Toast.makeText(this, "Picture deleted", Toast.LENGTH_SHORT).show();
             openButton.setVisibility(View.VISIBLE);
             openButton.setEnabled(true);
-            createdPictures.setVisibility(View.INVISIBLE);
-            createdPictures.setEnabled(false);
+            createdPictures.setVisibility(View.VISIBLE);
+            createdPictures.setEnabled(true);
             imageView.setVisibility(View.INVISIBLE);
             deleteButton.setVisibility(View.INVISIBLE);
             deleteButton.setEnabled(false);
+            cancelButton.setVisibility(View.INVISIBLE);
+            cancelButton.setEnabled(false);
             setCreatedPictures();
         } else {
             Toast.makeText(this, "Picture could not be deleted", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Allows the user to change the picture.
+     * @param view is needed to use onClick() in the XML-File.
+     */
+    public void cancelAction(View view) {
+        openButton.setVisibility(View.VISIBLE);
+        openButton.setEnabled(true);
+
+        deleteButton.setVisibility(View.INVISIBLE);
+        deleteButton.setEnabled(false);
+
+        imageView.setVisibility(View.INVISIBLE);
+
+        cancelButton.setVisibility(View.INVISIBLE);
+        cancelButton.setEnabled(false);
+
+        createdPictures.setVisibility(View.VISIBLE);
+
+        setCreatedPictures();
     }
 
     /**

@@ -37,4 +37,5 @@
     <string name="button_delete_picture_gallery">Delete</string>
     <string name="textView_show_picture_gallery"/>
     <string name="editText_rename_picture_gallery">Empty</string>
+    <string name="button_cancel_picture_gallery">Cancel</string>
 </resources>
